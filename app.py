@@ -1,3 +1,4 @@
+import base64
 import os
 import textwrap
 from typing import Any, Dict, List, Optional
@@ -15,7 +16,7 @@ st.set_page_config(
     page_title="FactoryOps | Predictive Maintenance",
     page_icon="🏭",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 API_BASE_URL = os.getenv(
@@ -24,6 +25,23 @@ API_BASE_URL = os.getenv(
 ).rstrip("/")
 
 REQUEST_TIMEOUT = 8
+
+
+@st.cache_data
+def get_login_bg_base64() -> str:
+    paths = [
+        r"C:\Users\Premalatha N K\.gemini\antigravity-ide\brain\89070437-1b21-4396-843d-e0abfeeccbd6\.user_uploaded\media_1788361798787.png",
+        os.path.join(
+            os.path.dirname(__file__),
+            "assets",
+            "login_bg.png",
+        ),
+    ]
+    for bg_path in paths:
+        if os.path.exists(bg_path):
+            with open(bg_path, "rb") as f:
+                return base64.b64encode(f.read()).decode("utf-8")
+    return ""
 
 
 # ============================================================
@@ -71,6 +89,7 @@ if "page" not in st.session_state:
 # ============================================================
 # HTML RENDER HELPER
 # ============================================================
+
 
 def render_html(content: str):
     st.html(textwrap.dedent(content).strip())
@@ -129,165 +148,526 @@ render_html(
 
 
         /* ==================================================
-           SIDEBAR
+           OFFICIAL TOP NAVIGATION
            ================================================== */
 
         [data-testid="stSidebar"] {
-            background:
-                linear-gradient(
-                    180deg,
-                    #0f172a 0%,
-                    #111827 50%,
-                    #172033 100%
-                );
-
-            border-right: 1px solid rgba(255,255,255,0.08);
+            display: none;
         }
 
-        [data-testid="stSidebar"] * {
-            color: #f8fafc !important;
-        }
-
-        .brand {
-            font-size: 1.55rem;
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            margin-bottom: 0.15rem;
-            padding-top: 0.3rem;
-        }
-
-        .brand-sub {
-            color: #94a3b8 !important;
-            font-size: 0.76rem;
-            margin-bottom: 1.2rem;
-        }
-
-
-        /* ==================================================
-           SIDEBAR BUTTONS
-           ================================================== */
-
-        [data-testid="stSidebar"] .stButton > button {
-            width: 100%;
-
-            background: rgba(255,255,255,0.08) !important;
-
-            color: #f8fafc !important;
-
-            border: 1px solid rgba(255,255,255,0.16) !important;
-
-            border-radius: 10px !important;
-
-            font-weight: 650 !important;
-
-            min-height: 42px;
-
-            transition:
-                background 0.2s ease,
-                border-color 0.2s ease,
-                transform 0.15s ease;
-        }
-
-        [data-testid="stSidebar"] .stButton > button:hover {
-            background: rgba(255,255,255,0.15) !important;
-
-            border-color: rgba(255,255,255,0.28) !important;
-
-            color: #ffffff !important;
-
-            transform: translateY(-1px);
-        }
-
-        [data-testid="stSidebar"] .stButton > button:active {
-            background: rgba(255,255,255,0.20) !important;
-        }
-
-        [data-testid="stSidebar"] .stButton > button p {
-            color: #f8fafc !important;
-            font-weight: 650 !important;
-        }
-
-
-        /* ==================================================
-           LOGIN PAGE
-           ================================================== */
-
-        .login-left {
-            padding: 3rem;
-            border-radius: 24px;
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(30, 64, 175, 0.94),
-                    rgba(14, 116, 144, 0.90)
-                );
-            box-shadow:
-                0 20px 45px rgba(15, 23, 42, 0.16);
-            min-height: 440px;
+        .factory-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 999;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.85rem 1.2rem;
+            margin: -1.2rem 0 1.2rem 0;
+            background: rgba(7, 24, 52, 0.94);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 10px 30px rgba(7,24,52,0.16);
         }
 
-        .login-brand {
-            color: white;
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: -0.05em;
-            margin-bottom: 0.8rem;
+        .factory-topbar-brand {
+            color: #ffffff;
+            font-size: 1.35rem;
+            font-weight: 850;
+            letter-spacing: -0.03em;
+            white-space: nowrap;
         }
 
-        .login-brand-icon {
-            font-size: 3.5rem;
-            margin-bottom: 0.5rem;
+        .factory-topbar-sub {
+            color: #bfdbfe;
+            font-size: 0.86rem;
+            margin-left: 0.35rem;
         }
 
-        .login-description {
-            color: rgba(255,255,255,0.88);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        .login-feature {
-            color: rgba(255,255,255,0.9);
+        .factory-nav-note {
+            color: #cbd5e1;
             font-size: 0.9rem;
-            line-height: 1.9;
         }
 
-        .login-card {
-            background: rgba(255,255,255,0.96);
-            border-radius: 20px;
-            padding: 2rem;
-            min-height: 190px;
-            box-shadow:
-                0 15px 35px rgba(15,23,42,0.10);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 1rem;
+        .factory-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            flex-wrap: wrap;
+            margin-top: 0.6rem;
         }
 
-        .login-heading {
-            color: #111827;
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .portal-label {
-            color: #64748b;
+        .factory-nav-links a {
+            color: #dbeafe !important;
+            text-decoration: none !important;
             font-size: 0.9rem;
+            font-weight: 650;
+            padding: 0.42rem 0.65rem;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: 0.2s ease;
+        }
+
+        .factory-nav-links a:hover {
+            color: #ffffff !important;
+            background: rgba(255,255,255,0.10);
+            border-color: rgba(255,255,255,0.12);
         }
 
 
         /* ==================================================
-           LOGIN FORM
+           RESPONSIVE PRODUCTION LOGIN EXPERIENCE (FactoryOps)
            ================================================== */
 
-        [data-testid="stForm"] {
-            border: 1px solid #cbd5e1 !important;
+        /* Hide Streamlit default header, footer & padding */
+        header[data-testid="stHeader"],
+        div[data-testid="stToolbar"],
+        #MainMenu,
+        footer {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        .block-container {
+            padding: 0 !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+        }
+
+        .stApp {
+            overflow-x: hidden !important;
+        }
+
+        .login-backdrop-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #020614;
+            z-index: 9990;
+            pointer-events: none;
+        }
+
+        /* Split Screen Container - Rigid 50/50 Side-by-Side */
+        [class*="st-key-login_frame"] {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            transform: none !important;
+            z-index: 9999 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            overflow: hidden !important;
+            background: #020614 !important;
+            padding: 0 !important;
+        }
+
+        [class*="st-key-login_frame"] [data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            gap: 0 !important;
+            margin: 0 !important;
+            align-items: stretch !important;
+        }
+
+        /* Left Industrial Background Column - 50vw */
+        [class*="st-key-login_frame"] [data-testid="stColumn"]:nth-of-type(1) {
+            padding: 0 !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            flex: 1 1 50% !important;
+            width: 50vw !important;
+            min-width: 50vw !important;
+            max-width: 50vw !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        .login-hero-container {
+            width: 100%;
+            height: 100% !important;
+            min-height: 100vh !important;
+            background-size: cover !important;
+            background-position: left center !important;
+            background-repeat: no-repeat !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-end !important;
+            padding: clamp(2.5rem, 5vw, 5rem) !important;
+            box-sizing: border-box !important;
+            position: relative;
+        }
+
+        .login-hero-content-box {
+            position: relative;
+            z-index: 2;
+            max-width: 540px;
+        }
+
+        .hero-title-brand {
+            color: #ffffff;
+            font-size: clamp(2.8rem, 4.2vw, 4.8rem);
+            font-weight: 850;
+            letter-spacing: -0.045em;
+            line-height: 1.05;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .hero-tagline-text {
+            color: #dbeafe;
+            font-size: clamp(1.05rem, 1.35vw, 1.4rem);
+            font-weight: 400;
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .hero-divider-bar {
+            width: 48px;
+            height: 2.5px;
+            background: #2563eb;
+            margin-bottom: 1.5rem;
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.8);
+        }
+
+        /* Right Panel - Equal 50vw Width, Perfectly Centered */
+        [class*="st-key-login_frame"] [data-testid="stColumn"]:nth-of-type(2) {
+            padding: 0 !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            flex: 1 1 50% !important;
+            width: 50vw !important;
+            min-width: 50vw !important;
+            max-width: 50vw !important;
+            background: linear-gradient(160deg, #020817 0%, #051538 55%, #072254 100%) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
+        [class*="st-key-login_frame"] [data-testid="stColumn"]:nth-of-type(2) > div[data-testid="stVerticalBlock"] {
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 2rem !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+        }
+
+        /* Seamless Centered Login Form Block (Matches User Reference Image 1) */
+        [class*="st-key-login_form_side"] {
+            width: 100% !important;
+            max-width: 440px !important;
+            background: transparent !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            box-sizing: border-box !important;
+            margin: auto !important;
+        }
+
+        .login-form-eyebrow {
+            color: #3b82f6;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 0.35rem;
+            text-align: left !important;
+            width: 100% !important;
+        }
+
+        .login-form-heading {
+            color: #ffffff;
+            font-size: 2.6rem;
+            font-weight: 750;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.4rem;
+            line-height: 1.1;
+            text-align: left !important;
+            width: 100% !important;
+        }
+
+        .login-form-subtitle {
+            color: #94a3b8;
+            font-size: 0.98rem;
+            margin-bottom: 2rem;
+            text-align: left !important;
+            width: 100% !important;
+        }
+
+        /* Portal Radio Buttons - Clean Blue Radio Selection (Image 1) */
+        [class*="st-key-login_portal"] {
+            margin-bottom: 1.8rem !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: flex-start !important;
+        }
+
+        [class*="st-key-login_portal"] [data-testid="stRadio"] > label {
+            display: none !important;
+        }
+
+        [class*="st-key-login_portal"] div[role="radiogroup"] {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: flex-start !important;
+            gap: 2.5rem !important;
+            width: 100% !important;
+        }
+
+        [class*="st-key-login_portal"] div[role="radiogroup"] label {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.65rem !important;
+            color: #ffffff !important;
+            font-size: 1rem !important;
+            font-weight: 500 !important;
+            cursor: pointer !important;
+        }
+
+        [class*="st-key-login_portal"] div[role="radiogroup"] label p {
+            color: #ffffff !important;
+            font-size: 1rem !important;
+        }
+
+        /* Radio outer ring */
+        div[data-testid="stRadio"] [role="radiogroup"] label > div > div:nth-child(1),
+        div[data-testid="stRadio"] [role="radiogroup"] input:checked ~ div:nth-of-type(1),
+        [class*="st-key-login_portal"] div[role="radiogroup"] [data-baseweb="radio"] div {
+            border-color: #3b82f6 !important;
+            background-color: transparent !important;
+        }
+
+        /* Radio active inner dot - Pure Blue (#2563eb) overriding red inline style */
+        div[data-testid="stRadio"] div[class*="etak9228"],
+        div[data-testid="stRadio"] [role="radiogroup"] input:checked ~ div:nth-of-type(2),
+        div[data-testid="stRadio"] [role="radiogroup"] label > div > div:nth-of-type(2),
+        div[data-testid="stRadio"] [role="radiogroup"] div[style*="255, 75, 75"] {
+            background-color: #2563eb !important;
+            background: #2563eb !important;
+            border-color: #2563eb !important;
+        }
+
+        /* Form Controls & Inputs */
+        div[data-testid="stForm"] {
+            border: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+            width: 100% !important;
+        }
+
+        div[data-testid="stForm"] [data-testid="stTextInput"] {
+            margin-bottom: 1.4rem !important;
+            width: 100% !important;
+        }
+
+        div[data-testid="stForm"] [data-testid="stTextInput"] label,
+        div[data-testid="stForm"] [data-testid="stTextInput"] label p {
+            color: #cbd5e1 !important;
+            font-size: 0.92rem !important;
+            font-weight: 500 !important;
+            margin-bottom: 0.45rem !important;
+            text-align: left !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        /* Textbox Input Container - Distinct Visible Electric Blue Border (Image 1) */
+        div[data-testid="stTextInput"] div[data-baseweb="input"] {
+            background-color: rgba(6, 18, 48, 0.75) !important;
+            background: rgba(6, 18, 48, 0.75) !important;
+            border: 1.5px solid #2563eb !important;
             border-radius: 12px !important;
-            padding: 0.75rem !important;
-            background: rgba(255,255,255,0.20) !important;
+            box-shadow: none !important;
+            height: 50px !important;
+            min-height: 50px !important;
+            box-sizing: border-box !important;
+            transition: all 0.2s ease !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+        }
+
+        div[data-testid="stTextInput"] div[data-baseweb="input"]:hover {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.35) !important;
+        }
+
+        div[data-testid="stTextInput"] div[data-baseweb="input"]:focus-within {
+            border-color: #60a5fa !important;
+            box-shadow: 0 0 16px rgba(96, 165, 250, 0.5) !important;
+        }
+
+        /* Inner wrappers transparent to reveal dark navy container fill */
+        div[data-testid="stTextInput"] div[data-baseweb="input"] div,
+        div[data-testid="stTextInput"] div[data-baseweb="base-input"] {
+            border: none !important;
+            border-color: transparent !important;
+            background-color: transparent !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        div[data-testid="stTextInput"] input {
+            background-color: transparent !important;
+            background: transparent !important;
+            color: #ffffff !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            font-size: 0.98rem !important;
+            height: 48px !important;
+            min-height: 48px !important;
+            width: 100% !important;
+            padding-right: 14px !important;
+        }
+
+        div[data-testid="stTextInput"] input::placeholder {
+            color: #8ca3c5 !important;
+            opacity: 0.9 !important;
+        }
+
+        /* Username Input - Left User SVG Icon (Image 1) */
+        div[data-testid="stTextInput"] input[aria-label="Username"] {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: 14px center !important;
+            padding-left: 44px !important;
+        }
+
+        /* Password Input - Left Lock SVG Icon (Image 1) */
+        div[data-testid="stTextInput"] input[aria-label="Password"] {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: 14px center !important;
+            padding-left: 44px !important;
+        }
+
+        /* Password Eye Toggle Icon */
+        [data-testid="stTextInput"] button {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            color: #60a5fa !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            margin-right: 8px !important;
+        }
+
+        [data-testid="stTextInput"] button svg,
+        [data-testid="stTextInput"] button path {
+            fill: none !important;
+            stroke: #60a5fa !important;
+            color: #60a5fa !important;
+        }
+
+        /* Sign In Button - Crisp Pill matching Image 1 */
+        div[data-testid="stFormSubmitButton"] {
+            width: 100% !important;
+            margin-top: 1rem !important;
+        }
+
+        div[data-testid="stFormSubmitButton"] button,
+        button[data-testid="stBaseButton-primaryFormSubmit"] {
+            width: 100% !important;
+            height: 50px !important;
+            min-height: 50px !important;
+            background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%) !important;
+            background-color: #2563eb !important;
+            border: none !important;
+            outline: none !important;
+            border-radius: 12px !important;
+            color: #ffffff !important;
+            font-size: 1.05rem !important;
+            font-weight: 600 !important;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45) !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        div[data-testid="stFormSubmitButton"] button:hover,
+        button[data-testid="stBaseButton-primaryFormSubmit"]:hover {
+            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+            background-color: #3b82f6 !important;
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.65) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        div[data-testid="stFormSubmitButton"] button *,
+        button[data-testid="stBaseButton-primaryFormSubmit"] * {
+            background: transparent !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            color: #ffffff !important;
+            font-size: 1.05rem !important;
+            font-weight: 600 !important;
+            display: inline-block !important;
+            width: auto !important;
+            height: auto !important;
+            line-height: 1 !important;
+        }
+
+        /* Tablet & Mobile Media Queries */
+        @media (max-width: 900px) {
+            [class*="st-key-login_frame"] > [data-testid="stHorizontalBlock"] {
+                flex-direction: column !important;
+            }
+            [class*="st-key-login_frame"] [data-testid="stColumn"]:nth-of-type(1) {
+                min-height: 280px !important;
+                height: 35vh !important;
+                flex: none !important;
+            }
+            .login-hero-container {
+                min-height: 280px !important;
+                height: 35vh !important;
+                padding: 1.5rem 2rem !important;
+            }
+            [class*="st-key-login_frame"] [data-testid="stColumn"]:nth-of-type(2) {
+                min-height: auto !important;
+                padding: 2rem 1.2rem !important;
+                flex: none !important;
+            }
+            [class*="st-key-login_form_side"] {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 2rem 1.5rem !important;
+            }
         }
 
 
@@ -302,9 +682,8 @@ render_html(
             margin: 0 0 1rem 0;
             border-radius: 22px;
             border: 1px solid rgba(226,232,240,0.9);
-            background: rgba(255,255,255,0.42);
-            box-shadow:
-                0 5px 20px rgba(15,23,42,0.035);
+            background: rgba(255,255,255,0.82);
+            box-shadow: 0 5px 20px rgba(15,23,42,0.07);
             scroll-margin-top: 25px;
         }
 
@@ -316,12 +695,7 @@ render_html(
             width: 5px;
             height: 100%;
             border-radius: 22px 0 0 22px;
-            background:
-                linear-gradient(
-                    180deg,
-                    #2563eb,
-                    #0ea5e9
-                );
+            background: linear-gradient(180deg, #2563eb, #0ea5e9);
         }
 
         .section-header {
@@ -330,7 +704,7 @@ render_html(
 
         .section-kicker {
             color: #2563eb;
-            font-size: 0.72rem;
+            font-size: 0.82rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.12em;
@@ -339,7 +713,7 @@ render_html(
 
         .section-main-title {
             color: #0f172a;
-            font-size: 2rem;
+            font-size: 2.25rem;
             font-weight: 850;
             letter-spacing: -0.045em;
             line-height: 1.1;
@@ -382,13 +756,13 @@ render_html(
 
         .metric-label {
             color: #64748b;
-            font-size: 0.82rem;
+            font-size: 0.95rem;
             font-weight: 600;
         }
 
         .metric-value {
             color: #111827;
-            font-size: 1.65rem;
+            font-size: 1.9rem;
             font-weight: 800;
             margin-top: 0.35rem;
         }
@@ -405,7 +779,7 @@ render_html(
            ================================================== */
 
         .section-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 800;
             color: #1e293b;
             margin: 1.3rem 0 0.7rem 0;
@@ -574,7 +948,7 @@ render_html(
         }
 
         .factory-table td {
-            text-align: right !important;
+            text-align: left !important;
             padding: 11px 16px;
             color: #111827;
             border-bottom: 1px solid #f1f5f9;
@@ -644,13 +1018,39 @@ render_html(
                 font-size: 1.55rem;
             }
 
-            .login-left {
-                padding: 2rem;
-                min-height: auto;
+            .login-shell {
+                height: 100dvh;
+                min-height: 0;
+                padding: 1rem;
+                align-items: center;
+                inset: 8px;
             }
 
-            .login-brand {
-                font-size: 2.3rem;
+            .login-hero-copy {
+                padding: 1.35rem;
+            }
+
+            .login-hero-feature {
+                display: none;
+            }
+
+            .login-shell::before {
+                display: none;
+            }
+
+            [class*="st-key-login-card"] {
+                width: auto;
+                max-width: none;
+                height: auto;
+                min-height: auto;
+                top: auto;
+                right: 8px;
+                bottom: 8px;
+                left: 8px;
+                margin: 0;
+                padding: 1.25rem;
+                border-radius: 22px;
+                background: rgba(11,25,48,0.82);
             }
         }
 
@@ -663,212 +1063,15 @@ render_html(
 # SCROLL-SPY JAVASCRIPT
 # ============================================================
 
+
 def inject_scroll_spy():
-
-    render_html(
-        """
-        <script>
-
-        (function() {
-
-            const sectionNames = [
-                "Dashboard",
-                "Machines",
-                "Sensors",
-                "Predictions",
-                "Maintenance",
-                "Incidents",
-                "Help"
-            ];
-
-            const sectionIds = [
-                "factory-dashboard",
-                "factory-machines",
-                "factory-sensors",
-                "factory-predictions",
-                "factory-maintenance",
-                "factory-incidents",
-                "factory-help"
-            ];
-
-
-            function findSection(name) {
-
-                const id = "factory-" +
-                    name.toLowerCase();
-
-                return document.getElementById(id);
-            }
-
-
-            function updateSidebar() {
-
-                let activeIndex = 0;
-
-                let bestDistance = Infinity;
-
-                sectionIds.forEach(
-                    function(id, index) {
-
-                        const section =
-                            document.getElementById(id);
-
-                        if (!section) {
-                            return;
-                        }
-
-                        const rect =
-                            section.getBoundingClientRect();
-
-                        const distance =
-                            Math.abs(rect.top - 130);
-
-                        if (
-                            rect.top <= 180 &&
-                            distance < bestDistance
-                        ) {
-
-                            bestDistance = distance;
-                            activeIndex = index;
-                        }
-
-                    }
-                );
-
-
-                const sidebar =
-                    document.querySelector(
-                        '[data-testid="stSidebar"]'
-                    );
-
-                if (!sidebar) {
-                    return;
-                }
-
-
-                const radios =
-                    sidebar.querySelectorAll(
-                        'input[type="radio"]'
-                    );
-
-
-                if (
-                    radios.length >=
-                    sectionNames.length
-                ) {
-
-                    const target =
-                        radios[activeIndex];
-
-                    if (
-                        target &&
-                        !target.checked
-                    ) {
-
-                        target.click();
-                    }
-                }
-
-            }
-
-
-            function scrollToSection(name) {
-
-                const section =
-                    findSection(name);
-
-                if (!section) {
-                    return;
-                }
-
-                section.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-            }
-
-
-            let ticking = false;
-
-            window.addEventListener(
-                "scroll",
-                function() {
-
-                    if (!ticking) {
-
-                        window.requestAnimationFrame(
-                            function() {
-
-                                updateSidebar();
-
-                                ticking = false;
-
-                            }
-                        );
-
-                        ticking = true;
-                    }
-
-                },
-                { passive: true }
-            );
-
-
-            document.addEventListener(
-                "click",
-                function(event) {
-
-                    const target =
-                        event.target.closest(
-                            '[data-testid="stSidebar"] label'
-                        );
-
-                    if (!target) {
-                        return;
-                    }
-
-
-                    const text =
-                        target.innerText.trim();
-
-                    const index =
-                        sectionNames.indexOf(text);
-
-                    if (index !== -1) {
-
-                        setTimeout(
-                            function() {
-
-                                scrollToSection(
-                                    sectionNames[index]
-                                );
-
-                            },
-                            150
-                        );
-
-                    }
-
-                }
-            );
-
-
-            setTimeout(
-                updateSidebar,
-                1000
-            );
-
-        })();
-
-        </script>
-        """
-    )
+    return
 
 
 # ============================================================
 # API HELPERS
 # ============================================================
+
 
 def api_request(
     method: str,
@@ -942,10 +1145,13 @@ def safe_get(
 
     try:
 
-        return api_get(
-            path,
-            params=params,
-        ), None
+        return (
+            api_get(
+                path,
+                params=params,
+            ),
+            None,
+        )
 
     except requests.exceptions.ConnectionError:
 
@@ -963,11 +1169,7 @@ def safe_get(
 
     except requests.exceptions.HTTPError as exc:
 
-        status = (
-            exc.response.status_code
-            if exc.response is not None
-            else "unknown"
-        )
+        status = exc.response.status_code if exc.response is not None else "unknown"
 
         detail = ""
 
@@ -1002,9 +1204,7 @@ def fetch_first(
         if error is None:
             return data, None
 
-        errors.append(
-            f"{path}: {error}"
-        )
+        errors.append(f"{path}: {error}")
 
     return (
         None,
@@ -1015,6 +1215,7 @@ def fetch_first(
 # ============================================================
 # FORMATTERS
 # ============================================================
+
 
 def fmt_number(
     value: Any,
@@ -1070,93 +1271,52 @@ def normalize_dataframe(
 # TABLE DISPLAY HELPER
 # ============================================================
 
+
 def display_table(
     df: pd.DataFrame,
+    units: Optional[Dict[str, str]] = None,
 ):
-
     if df.empty:
-
-        st.info(
-            "No data available."
-        )
-
+        st.info("No data available.")
         return
 
-    html = """
-    <div class="factory-table-wrapper">
+    units = units or {}
+    display_df = df.copy()
 
-        <table class="factory-table">
-
-            <thead>
-
-                <tr>
-    """
-
-    for column in df.columns:
-
-        header = (
-            str(column)
-            .replace(
-                "_",
-                " ",
+    for column, unit in units.items():
+        if column in display_df.columns:
+            display_df[column] = display_df[column].apply(
+                lambda value: "—" if pd.isna(value) else f"{value} {unit}"
             )
-            .title()
+
+    styled_df = display_df.style
+    numeric_columns = display_df.select_dtypes(include="number").columns
+    text_columns = display_df.select_dtypes(exclude="number").columns
+
+    if len(numeric_columns):
+        styled_df = styled_df.set_properties(
+            subset=list(numeric_columns),
+            **{"text-align": "right"},
         )
 
-        html += f"""
-                    <th>
-                        {header}
-                    </th>
-        """
+    if len(text_columns):
+        styled_df = styled_df.set_properties(
+            subset=list(text_columns),
+            **{"text-align": "left"},
+        )
 
-    html += """
-                </tr>
-
-            </thead>
-
-            <tbody>
-    """
-
-    for _, row in df.iterrows():
-
-        html += """
-                <tr>
-        """
-
-        for value in row:
-
-            if pd.isna(value):
-
-                display_value = "—"
-
-            else:
-
-                display_value = str(value)
-
-            html += f"""
-                    <td>
-                        {display_value}
-                    </td>
-            """
-
-        html += """
-                </tr>
-        """
-
-    html += """
-            </tbody>
-
-        </table>
-
-    </div>
-    """
-
-    render_html(html)
+    st.dataframe(
+        styled_df,
+        use_container_width=True,
+        hide_index=True,
+        height=min(520, 90 + 36 * len(display_df)),
+    )
 
 
 # ============================================================
 # SECTION WRAPPERS
 # ============================================================
+
 
 def section_start(
     section_id: str,
@@ -1196,143 +1356,164 @@ def section_end():
     )
 
 
+def top_navigation(pages: List[str]):
+    links = " ".join(
+        f'<a href="#factory-{page.lower().replace(" ", "-")}">{page}</a>'
+        for page in pages
+    )
+
+    render_html(
+        f"""
+        <div class="factory-topbar">
+            <div style="width:100%;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+                    <div>
+                        <span class="factory-topbar-brand">FactoryOps</span>
+                        <span class="factory-topbar-sub">Smart Factory Intelligence</span>
+                    </div>
+                    <div class="factory-nav-note">Predictive Maintenance Platform</div>
+                </div>
+                <div class="factory-nav-links">
+                    {links}
+                </div>
+            </div>
+        </div>
+        """
+    )
+
+    c1, c2, c3 = st.columns([1, 1, 8])
+    with c1:
+        if st.button("Refresh", use_container_width=True, key="top_refresh"):
+            st.rerun()
+    with c2:
+        if st.button("Logout", use_container_width=True, key="top_logout"):
+            st.session_state.clear()
+            st.rerun()
+
+
 # ============================================================
 # LOGIN PAGE
 # ============================================================
 
+
 def login_page():
+    bg_base64 = get_login_bg_base64()
 
-    left_column, right_column = st.columns(
-        [1.05, 1],
-        gap="large",
-    )
+    render_html('<div class="login-backdrop-overlay"></div>')
 
+    with st.container(key="login_frame"):
+        col1, col2 = st.columns([1, 1], gap="small")
 
-    with left_column:
-
-        render_html(
-            """
-            <div class="login-left">
-
-                <div class="login-brand-icon">
-                    🏭
+        with col1:
+            render_html(
+                f"""
+                <div class="login-hero-container" style="background-image: url('data:image/png;base64,{bg_base64}');">
+                    <div class="login-hero-content-box">
+                        <div class="hero-title-brand">FactoryOps</div>
+                        <div class="hero-tagline-text">Smart Operations. Stronger Tomorrow.</div>
+                        <div class="hero-divider-bar"></div>
+                    </div>
                 </div>
-
-                <div class="login-brand">
-                    FactoryOps
-                </div>
-
-                <div class="login-description">
-                    Intelligent predictive maintenance and
-                    factory operations management in one platform.
-                </div>
-
-                <div class="login-feature">
-                    Monitor machines<br>
-                    Track sensor performance<br>
-                    Predict equipment failures<br>
-                    Manage maintenance and incidents
-                </div>
-
-            </div>
-            """
-        )
-
-
-    with right_column:
-
-        render_html(
-            """
-            <div class="login-card">
-
-                <div class="login-heading">
-                    Welcome Back
-                </div>
-
-                <div class="portal-label">
-                    Sign in to access FactoryOps
-                </div>
-
-            </div>
-            """
-        )
-
-
-        portal = st.radio(
-            "Portal",
-            [
-                "User Portal",
-                "Admin Portal",
-            ],
-            horizontal=True,
-            label_visibility="collapsed",
-        )
-
-
-        st.write("")
-
-
-        with st.form(
-            "login_form",
-            clear_on_submit=False,
-        ):
-
-            username = st.text_input(
-                "Username",
-                placeholder="Enter username",
+                """
             )
 
-            password = st.text_input(
-                "Password",
-                type="password",
-                placeholder="Enter password",
+        with col2:
+            render_html(
+                """
+                <script>
+                (() => {
+                    function applyMockupTheme() {
+                        document.querySelectorAll('[data-testid="stTextInput"] div[data-baseweb="input"]').forEach(el => {
+                            el.style.setProperty('background-color', 'rgba(6, 18, 48, 0.75)', 'important');
+                            el.style.setProperty('border', '1.5px solid #2563eb', 'important');
+                            el.style.setProperty('border-radius', '12px', 'important');
+                        });
+                        document.querySelectorAll('[data-testid="stTextInput"] div[data-baseweb="input"] div, [data-testid="stTextInput"] div[data-baseweb="base-input"]').forEach(el => {
+                            el.style.setProperty('background-color', 'transparent', 'important');
+                            el.style.setProperty('border', 'none', 'important');
+                        });
+                        document.querySelectorAll('[data-testid="stTextInput"] input').forEach(el => {
+                            el.style.setProperty('background-color', 'transparent', 'important');
+                            el.style.setProperty('color', '#ffffff', 'important');
+                        });
+                        document.querySelectorAll('[data-testid="stRadio"] [role="radiogroup"] input:checked').forEach(radio => {
+                            const container = radio.closest('label');
+                            if (container) {
+                                const dots = container.querySelectorAll('div > div');
+                                if (dots.length > 1) {
+                                    dots[1].style.setProperty('background-color', '#2563eb', 'important');
+                                }
+                            }
+                        });
+                    }
+                    applyMockupTheme();
+                    setInterval(applyMockupTheme, 250);
+                })();
+                </script>
+                """
             )
 
-            submitted = st.form_submit_button(
-                "Sign In",
-                use_container_width=True,
-                type="primary",
-            )
+            with st.container(key="login_form_side"):
+                render_html(
+                    """
+                    <div class="login-form-eyebrow">Login to your account!</div>
+                    <div class="login-form-heading">Welcome Back!</div>
+                    <div class="login-form-subtitle">Please enter your details to continue</div>
+                    """
+                )
 
+                portal = st.radio(
+                    "Portal",
+                    ["User Portal", "Admin Portal"],
+                    horizontal=True,
+                    label_visibility="collapsed",
+                    key="login_portal",
+                )
 
-            if submitted:
-
-                if (
-                    portal == "Admin Portal"
-                    and username == ADMIN_USERNAME
-                    and password == ADMIN_PASSWORD
-                ):
-
-                    st.session_state.authenticated = True
-                    st.session_state.username = username
-                    st.session_state.role = "admin"
-
-                    st.rerun()
-
-
-                elif (
-                    portal == "User Portal"
-                    and username == USER_USERNAME
-                    and password == USER_PASSWORD
-                ):
-
-                    st.session_state.authenticated = True
-                    st.session_state.username = username
-                    st.session_state.role = "user"
-
-                    st.rerun()
-
-
-                else:
-
-                    st.error(
-                        "Invalid username or password for the selected portal."
+                with st.form("login_form", clear_on_submit=False):
+                    username = st.text_input(
+                        "Username",
+                        placeholder="Enter your username",
+                        key="login_username",
                     )
+                    password = st.text_input(
+                        "Password",
+                        type="password",
+                        placeholder="Enter your password",
+                        key="login_password",
+                    )
+                    submitted = st.form_submit_button(
+                        "Sign In",
+                        use_container_width=True,
+                        type="primary",
+                    )
+
+    if submitted:
+        valid_admin = (
+            portal == "Admin Portal"
+            and username == ADMIN_USERNAME
+            and password == ADMIN_PASSWORD
+        )
+        valid_user = (
+            portal == "User Portal"
+            and username == USER_USERNAME
+            and password == USER_PASSWORD
+        )
+
+        if valid_admin or valid_user:
+            st.session_state.authenticated = True
+            st.session_state.username = username
+            st.session_state.role = "admin" if valid_admin else "user"
+            st.session_state.page = "Dashboard"
+            st.rerun()
+        else:
+            st.error("Invalid username or password for the selected portal.")
 
 
 # ============================================================
 # DASHBOARD
 # ============================================================
+
 
 def dashboard_page():
 
@@ -1342,39 +1523,28 @@ def dashboard_page():
         "Factory Dashboard",
     )
 
-
-    dashboard, error = safe_get(
-        "/dashboard/summary"
-    )
-
+    dashboard, error = safe_get("/dashboard/summary")
 
     if error:
 
         st.error(error)
 
-        st.info(
-            "Start the backend first, then refresh this page."
-        )
+        st.info("Start the backend first, then refresh this page.")
 
         section_end()
         return
-
 
     if not isinstance(
         dashboard,
         dict,
     ):
 
-        st.error(
-            "Dashboard API returned an unexpected response."
-        )
+        st.error("Dashboard API returned an unexpected response.")
 
         section_end()
         return
 
-
     cols = st.columns(5)
-
 
     with cols[0]:
 
@@ -1386,7 +1556,6 @@ def dashboard_page():
             ),
         )
 
-
     with cols[1]:
 
         metric_card(
@@ -1396,7 +1565,6 @@ def dashboard_page():
                 0,
             ),
         )
-
 
     with cols[2]:
 
@@ -1408,7 +1576,6 @@ def dashboard_page():
             ),
         )
 
-
     with cols[3]:
 
         metric_card(
@@ -1418,7 +1585,6 @@ def dashboard_page():
                 0,
             ),
         )
-
 
     with cols[4]:
 
@@ -1430,22 +1596,14 @@ def dashboard_page():
             ),
         )
 
-
     cols = st.columns(5)
-
 
     with cols[0]:
 
         metric_card(
             "Average Health",
-            f"{fmt_number(
-                dashboard.get(
-                    "average_health_score"
-                ),
-                1,
-            )}%",
+            f"{fmt_number(dashboard.get('average_health_score'), 1)}%",
         )
-
 
     with cols[1]:
 
@@ -1457,7 +1615,6 @@ def dashboard_page():
             ),
         )
 
-
     with cols[2]:
 
         metric_card(
@@ -1467,7 +1624,6 @@ def dashboard_page():
                 0,
             ),
         )
-
 
     with cols[3]:
 
@@ -1479,7 +1635,6 @@ def dashboard_page():
             ),
         )
 
-
     with cols[4]:
 
         metric_card(
@@ -1490,7 +1645,6 @@ def dashboard_page():
             ),
         )
 
-
     render_html(
         """
         <div class="section-title">
@@ -1499,224 +1653,132 @@ def dashboard_page():
         """
     )
 
-
     healthy = int(
         dashboard.get(
             "healthy_machines",
             0,
-        ) or 0
+        )
+        or 0
     )
 
     warning = int(
         dashboard.get(
             "warning_machines",
             0,
-        ) or 0
+        )
+        or 0
     )
 
     critical = int(
         dashboard.get(
             "critical_machines",
             0,
-        ) or 0
+        )
+        or 0
     )
 
+    total_health = healthy + warning + critical
 
-    total_health = (
-        healthy
-        + warning
-        + critical
-    )
-
+    healthy_percent = healthy / total_health * 100 if total_health else 0
+    warning_percent = warning / total_health * 100 if total_health else 0
+    critical_percent = critical / total_health * 100 if total_health else 0
 
     if total_health > 0:
-
-        healthy_percent = (
-            healthy
-            / total_health
-        ) * 100
-
-        warning_percent = (
-            warning
-            / total_health
-        ) * 100
-
-        critical_percent = (
-            critical
-            / total_health
-        ) * 100
-
-
-        healthy_end = round(
-            healthy_percent,
-            2,
+        health_data = pd.DataFrame(
+            {
+                "Status": ["Healthy", "Warning", "Critical"],
+                "Machines": [healthy, warning, critical],
+            }
         )
 
-        warning_end = round(
-            healthy_percent
-            + warning_percent,
-            2,
-        )
-
-
-        chart_col, summary_col = st.columns(
-            [1.2, 1],
-            gap="large",
-        )
-
+        chart_col, summary_col = st.columns([1.35, 1], gap="large")
 
         with chart_col:
-
             render_html(
-                f"""
+                """
                 <div class="health-card">
-
                     <div class="health-chart-title">
-                        Machine Health Distribution
+                        Machine Health Overview
                     </div>
-
                     <div class="health-chart-subtitle">
-                        Current machine status across the factory
+                        Distribution of current machine health status
                     </div>
-
-                    <div class="health-overview-wrapper">
-
-                        <div
-                            class="donut-chart"
-                            style="
-                                background:
-                                conic-gradient(
-                                    from -90deg,
-                                    #22c55e 0% {healthy_end}%,
-                                    #f59e0b {healthy_end}% {warning_end}%,
-                                    #ef4444 {warning_end}% 100%
-                                );
-                            "
-                        >
-
-                            <div class="donut-center">
-
-                                <div class="donut-number">
-                                    {total_health}
-                                </div>
-
-                                <div class="donut-text">
-                                    Total Machines
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
                 """
             )
 
+            chart = {
+                "mark": {"type": "arc", "innerRadius": 58},
+                "encoding": {
+                    "theta": {"field": "Machines", "type": "quantitative"},
+                    "color": {
+                        "field": "Status",
+                        "type": "nominal",
+                        "scale": {
+                            "domain": ["Healthy", "Warning", "Critical"],
+                            "range": ["#16a34a", "#f59e0b", "#dc2626"],
+                        },
+                        "legend": {"title": None, "orient": "bottom"},
+                    },
+                    "tooltip": [
+                        {"field": "Status", "type": "nominal"},
+                        {"field": "Machines", "type": "quantitative"},
+                    ],
+                },
+                "width": "container",
+                "height": 300,
+            }
+
+            st.vega_lite_chart(
+                health_data,
+                chart,
+                use_container_width=True,
+            )
+            render_html("</div>")
 
         with summary_col:
-
             render_html(
                 f"""
                 <div class="health-card">
-
                     <div class="health-chart-title">
                         Health Summary
                     </div>
-
                     <div class="health-legend">
-
                         <div class="legend-row">
-
                             <div class="legend-left">
-
-                                <div
-                                    class="legend-dot"
-                                    style="background:#22c55e;"
-                                ></div>
-
+                                <div class="legend-dot" style="background:#16a34a;"></div>
                                 Healthy
-
                             </div>
-
                             <div class="legend-value">
-
                                 {healthy}
-
-                                <span class="legend-percentage">
-                                    ({healthy_percent:.1f}%)
-                                </span>
-
+                                <span class="legend-percentage">({healthy_percent:.1f}%)</span>
                             </div>
-
                         </div>
-
-
                         <div class="legend-row">
-
                             <div class="legend-left">
-
-                                <div
-                                    class="legend-dot"
-                                    style="background:#f59e0b;"
-                                ></div>
-
+                                <div class="legend-dot" style="background:#f59e0b;"></div>
                                 Warning
-
                             </div>
-
                             <div class="legend-value">
-
                                 {warning}
-
-                                <span class="legend-percentage">
-                                    ({warning_percent:.1f}%)
-                                </span>
-
+                                <span class="legend-percentage">({warning_percent:.1f}%)</span>
                             </div>
-
                         </div>
-
-
                         <div class="legend-row">
-
                             <div class="legend-left">
-
-                                <div
-                                    class="legend-dot"
-                                    style="background:#ef4444;"
-                                ></div>
-
+                                <div class="legend-dot" style="background:#dc2626;"></div>
                                 Critical
-
                             </div>
-
                             <div class="legend-value">
-
                                 {critical}
-
-                                <span class="legend-percentage">
-                                    ({critical_percent:.1f}%)
-                                </span>
-
+                                <span class="legend-percentage">({critical_percent:.1f}%)</span>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
                 """
             )
-
-
     else:
-
-        st.info(
-            "No machine health data is currently available."
-        )
-
+        st.info("No machine health data is currently available.")
 
     render_html(
         """
@@ -1726,9 +1788,7 @@ def dashboard_page():
         """
     )
 
-
     c1, c2, c3 = st.columns(3)
-
 
     with c1:
 
@@ -1741,7 +1801,6 @@ def dashboard_page():
             st.session_state.page = "Machines"
             st.rerun()
 
-
     with c2:
 
         if st.button(
@@ -1752,7 +1811,6 @@ def dashboard_page():
 
             st.session_state.page = "Predictions"
             st.rerun()
-
 
     with c3:
 
@@ -1765,13 +1823,13 @@ def dashboard_page():
             st.session_state.page = "Incidents"
             st.rerun()
 
-
     section_end()
 
 
 # ============================================================
 # MACHINES
 # ============================================================
+
 
 def machines_page():
 
@@ -1781,7 +1839,6 @@ def machines_page():
         "Machines",
     )
 
-
     data, error = fetch_first(
         [
             "/machines",
@@ -1789,36 +1846,28 @@ def machines_page():
         ]
     )
 
-
     if error:
 
         st.error(error)
         section_end()
         return
 
-
     rows = extract_list(data)
-
 
     if not rows:
 
-        st.warning(
-            "No machines returned by the API."
-        )
+        st.warning("No machines returned by the API.")
 
         section_end()
         return
 
-
     df = normalize_dataframe(rows)
-
 
     search = st.text_input(
         "Search machine",
         placeholder="Machine code or name",
         key="machines_search",
     )
-
 
     if search:
 
@@ -1836,14 +1885,9 @@ def machines_page():
 
         df = df[mask]
 
-
     display_table(df)
 
-
-    st.caption(
-        f"{len(df)} machine(s) shown."
-    )
-
+    st.caption(f"{len(df)} machine(s) shown.")
 
     section_end()
 
@@ -1851,6 +1895,7 @@ def machines_page():
 # ============================================================
 # SENSORS
 # ============================================================
+
 
 def sensors_page():
 
@@ -1860,7 +1905,6 @@ def sensors_page():
         "Sensor Monitoring",
     )
 
-
     machine_id = st.number_input(
         "Machine ID",
         min_value=1,
@@ -1869,14 +1913,12 @@ def sensors_page():
         key="sensor_machine_id",
     )
 
-
     data, error = fetch_first(
         [
             f"/sensors/machine/{machine_id}",
             f"/sensors?machine_id={machine_id}",
         ]
     )
-
 
     if error:
 
@@ -1887,29 +1929,22 @@ def sensors_page():
             ]
         )
 
-
     if error:
 
         st.error(error)
         section_end()
         return
 
-
     rows = extract_list(data)
-
 
     if not rows:
 
-        st.warning(
-            "No sensor readings found."
-        )
+        st.warning("No sensor readings found.")
 
         section_end()
         return
 
-
     df = normalize_dataframe(rows)
-
 
     numeric_cols = [
         column
@@ -1924,16 +1959,14 @@ def sensors_page():
         if column in df.columns
     ]
 
-
     units = {
-        "temperature": "°C",
-        "vibration": "mm/s",
+        "temperature": "Celsius (°C)",
+        "vibration": "millimeters per second (mm/s)",
         "pressure": "bar",
-        "humidity": "%",
-        "voltage": "V",
-        "current": "A",
+        "humidity": "percent (%)",
+        "voltage": "volts (V)",
+        "current": "amperes (A)",
     }
-
 
     if numeric_cols:
 
@@ -1945,9 +1978,7 @@ def sensors_page():
             """
         )
 
-
         latest = df.iloc[0]
-
 
         cols = st.columns(
             min(
@@ -1955,7 +1986,6 @@ def sensors_page():
                 6,
             )
         )
-
 
         for column, sensor_name in zip(
             cols,
@@ -1969,21 +1999,15 @@ def sensors_page():
                     "",
                 )
 
-                value = fmt_number(
-                    latest[sensor_name]
-                )
-
+                value = fmt_number(latest[sensor_name])
 
                 metric_card(
-                    sensor_name
-                    .replace(
+                    sensor_name.replace(
                         "_",
                         " ",
-                    )
-                    .title(),
+                    ).title(),
                     f"{value} {unit}",
                 )
-
 
     render_html(
         """
@@ -1993,9 +2017,7 @@ def sensors_page():
         """
     )
 
-
-    display_table(df)
-
+    display_table(df, units=units)
 
     section_end()
 
@@ -2003,6 +2025,7 @@ def sensors_page():
 # ============================================================
 # PREDICTIONS
 # ============================================================
+
 
 def predictions_page():
 
@@ -2012,7 +2035,6 @@ def predictions_page():
         "Failure Predictions",
     )
 
-
     data, error = fetch_first(
         [
             "/predictions",
@@ -2020,54 +2042,35 @@ def predictions_page():
         ]
     )
 
-
     if error:
 
         st.error(error)
         section_end()
         return
 
-
     rows = extract_list(data)
-
 
     if not rows:
 
-        st.warning(
-            "No predictions returned by the API."
-        )
+        st.warning("No predictions returned by the API.")
 
         section_end()
         return
 
-
     df = normalize_dataframe(rows)
-
 
     if "risk_level" in df.columns:
 
-        risk_options = sorted(
-            df["risk_level"]
-            .dropna()
-            .astype(str)
-            .unique()
-        )
-
-
-        risk_filter = st.multiselect(
+        risk_filter = st.selectbox(
             "Risk Level",
-            options=risk_options,
-            default=risk_options,
+            options=["High", "Medium", "Low"],
+            index=None,
+            placeholder="Select risk level",
             key="prediction_risk_filter",
         )
 
-
-        df = df[
-            df["risk_level"]
-            .astype(str)
-            .isin(risk_filter)
-        ]
-
+        if risk_filter:
+            df = df[df["risk_level"].astype(str).str.lower().eq(risk_filter.lower())]
 
     if "health_score" in df.columns:
 
@@ -2076,7 +2079,6 @@ def predictions_page():
             errors="coerce",
         )
 
-
     if "failure_probability" in df.columns:
 
         df["failure_probability"] = pd.to_numeric(
@@ -2084,46 +2086,29 @@ def predictions_page():
             errors="coerce",
         )
 
-
     c1, c2, c3 = st.columns(3)
-
 
     with c1:
 
         high_count = (
-            int(
-                (
-                    df["risk_level"]
-                    .astype(str)
-                    .str.lower()
-                    == "high"
-                ).sum()
-            )
+            int((df["risk_level"].astype(str).str.lower() == "high").sum())
             if "risk_level" in df.columns
             else 0
         )
-
 
         metric_card(
             "High Risk",
             high_count,
         )
 
-
     with c2:
 
-        avg_health = (
-            df["health_score"].mean()
-            if "health_score" in df.columns
-            else 0
-        )
-
+        avg_health = df["health_score"].mean() if "health_score" in df.columns else 0
 
         metric_card(
             "Average Health",
             f"{avg_health:.1f}%",
         )
-
 
     with c3:
 
@@ -2133,12 +2118,10 @@ def predictions_page():
             else 0
         )
 
-
         metric_card(
             "Avg Failure Probability",
             f"{avg_probability:.1f}%",
         )
-
 
     preferred = [
         "machine_id",
@@ -2150,23 +2133,60 @@ def predictions_page():
         "confidence_score",
     ]
 
+    visible = [column for column in preferred if column in df.columns]
 
-    visible = [
-        column
-        for column in preferred
-        if column in df.columns
-    ]
-
-
-    display_df = (
-        df[visible]
-        if visible
-        else df
-    )
-
+    display_df = df[visible] if visible else df
 
     display_table(display_df)
 
+    section_end()
+
+
+# ============================================================
+# RISK ANALYSIS
+# ============================================================
+
+
+def risk_page():
+    section_start(
+        "factory-risk-analysis",
+        "05",
+        "Risk Analysis",
+    )
+
+    data, error = fetch_first(["/predictions", "/prediction"])
+
+    if error:
+        st.error(error)
+        section_end()
+        return
+
+    rows = extract_list(data)
+    if not rows:
+        st.info("No prediction data is currently available.")
+        section_end()
+        return
+
+    df = normalize_dataframe(rows)
+
+    if "risk_level" not in df.columns:
+        st.info("Risk level is not available in the prediction response.")
+        section_end()
+        return
+
+    selected = st.selectbox(
+        "Risk Level",
+        ["High", "Medium", "Low"],
+        index=None,
+        placeholder="Select risk level",
+        key="risk_analysis_filter",
+    )
+
+    if selected:
+        df = df[df["risk_level"].astype(str).str.lower().eq(selected.lower())]
+
+    display_table(df)
+    st.caption(f"{len(df)} risk record(s) shown.")
 
     section_end()
 
@@ -2175,14 +2195,14 @@ def predictions_page():
 # MAINTENANCE
 # ============================================================
 
+
 def maintenance_page():
 
     section_start(
         "factory-maintenance",
-        "05",
+        "06",
         "Maintenance",
     )
-
 
     data, error = fetch_first(
         [
@@ -2191,16 +2211,13 @@ def maintenance_page():
         ]
     )
 
-
     if error:
 
         st.error(error)
         section_end()
         return
 
-
     rows = extract_list(data)
-
 
     if rows:
 
@@ -2208,17 +2225,11 @@ def maintenance_page():
 
         display_table(df)
 
-        st.caption(
-            f"{len(df)} maintenance record(s) shown."
-        )
-
+        st.caption(f"{len(df)} maintenance record(s) shown.")
 
     else:
 
-        st.info(
-            "No maintenance records are currently available."
-        )
-
+        st.info("No maintenance records are currently available.")
 
     render_html(
         """
@@ -2228,7 +2239,6 @@ def maintenance_page():
         """
     )
 
-
     machine_id = st.number_input(
         "Machine ID for recommendation",
         min_value=1,
@@ -2236,7 +2246,6 @@ def maintenance_page():
         step=1,
         key="maintenance_machine_id",
     )
-
 
     if st.button(
         "Get Recommendation",
@@ -2251,21 +2260,14 @@ def maintenance_page():
             ]
         )
 
-
         if prediction_error:
 
-            st.error(
-                prediction_error
-            )
+            st.error(prediction_error)
 
             section_end()
             return
 
-
-        prediction_rows = extract_list(
-            prediction_data
-        )
-
+        prediction_rows = extract_list(prediction_data)
 
         prediction = (
             prediction_rows[0]
@@ -2280,21 +2282,14 @@ def maintenance_page():
             )
         )
 
-
         if not prediction:
 
-            st.warning(
-                "No prediction found for this machine."
-            )
+            st.warning("No prediction found for this machine.")
 
             section_end()
             return
 
-
-        st.json(
-            prediction
-        )
-
+        st.json(prediction)
 
     section_end()
 
@@ -2303,14 +2298,14 @@ def maintenance_page():
 # INCIDENTS
 # ============================================================
 
+
 def incidents_page():
 
     section_start(
         "factory-incidents",
-        "06",
+        "07",
         "Incidents & Alerts",
     )
-
 
     data, error = fetch_first(
         [
@@ -2319,45 +2314,31 @@ def incidents_page():
         ]
     )
 
-
     if error:
 
         st.error(error)
         section_end()
         return
 
-
     rows = extract_list(data)
-
 
     if not rows:
 
-        st.info(
-            "No incidents returned by the API."
-        )
+        st.info("No incidents returned by the API.")
 
         section_end()
         return
 
-
     df = normalize_dataframe(rows)
-
 
     st.metric(
         "Total Incidents",
         len(df),
     )
 
-
     if "status" in df.columns:
 
-        statuses = sorted(
-            df["status"]
-            .dropna()
-            .astype(str)
-            .unique()
-        )
-
+        statuses = sorted(df["status"].dropna().astype(str).unique())
 
         selected = st.multiselect(
             "Filter by Status",
@@ -2366,16 +2347,9 @@ def incidents_page():
             key="incident_status_filter",
         )
 
-
-        df = df[
-            df["status"]
-            .astype(str)
-            .isin(selected)
-        ]
-
+        df = df[df["status"].astype(str).isin(selected)]
 
     display_table(df)
-
 
     section_end()
 
@@ -2384,14 +2358,14 @@ def incidents_page():
 # HELP
 # ============================================================
 
+
 def help_page():
 
     section_start(
         "factory-help",
-        "07",
+        "08",
         "Help & Support",
     )
-
 
     render_html(
         """
@@ -2400,7 +2374,6 @@ def help_page():
         </div>
         """
     )
-
 
     st.write(
         """
@@ -2420,42 +2393,36 @@ def help_page():
         """
     )
 
-
     render_html(
         """
         <div class="section-title">
-            Backend Connection
+            Need assistance?
         </div>
         """
     )
 
-
-    st.write(
-        "The application retrieves operational data from the connected FastAPI backend."
+    st.info(
+        "Use the navigation above to move between operational areas. "
+        "If a page cannot load data, make sure the FastAPI service is running "
+        "and then select Refresh."
     )
 
-
-    if st.button(
-        "Test Backend Connection",
-        type="primary",
-        key="test_backend",
-    ):
-
-        data, error = safe_get(
-            "/dashboard/summary"
+    with st.expander("What does each area do?"):
+        st.write(
+            "- Dashboard: factory health and key operational indicators.\n"
+            "- Machines: machine inventory and search.\n"
+            "- Sensors: latest telemetry with measurement units.\n"
+            "- Predictions: failure probability and risk levels.\n"
+            "- Risk Analysis: filter machines by High, Medium or Low risk.\n"
+            "- Maintenance: maintenance history and recommendations.\n"
+            "- Incidents: operational incidents and alerts."
         )
 
-
-        if error:
-
-            st.error(error)
-
-        else:
-
-            st.success(
-                "Backend connection is working."
-            )
-
+    with st.expander("User vs Admin Portal"):
+        st.write(
+            "Both portals use Streamlit session state for access control. "
+            "The selected role is stored only for the current Streamlit session."
+        )
 
     section_end()
 
@@ -2464,125 +2431,25 @@ def help_page():
 # MAIN APPLICATION
 # ============================================================
 
+
 def main():
 
-    # ========================================================
-    # LOGIN
-    # ========================================================
-
     if not st.session_state.authenticated:
-
         login_page()
-
         return
-
-
-    # ========================================================
-    # PAGES
-    # ========================================================
 
     pages = [
         "Dashboard",
         "Machines",
         "Sensors",
         "Predictions",
+        "Risk Analysis",
         "Maintenance",
         "Incidents",
         "Help",
     ]
 
-
-    current_page = st.session_state.get(
-        "page",
-        "Dashboard",
-    )
-
-
-    if current_page not in pages:
-
-        current_page = "Dashboard"
-
-
-    # ========================================================
-    # SIDEBAR
-    # ========================================================
-
-    with st.sidebar:
-
-        render_html(
-            """
-            <div class="brand">
-                🏭 FactoryOps
-            </div>
-            """
-        )
-
-
-        render_html(
-            """
-            <div class="brand-sub">
-                Predictive Maintenance Platform
-            </div>
-            """
-        )
-
-
-        # ----------------------------------------------------
-        # NAVIGATION
-        # ----------------------------------------------------
-
-        page = st.radio(
-            "Navigation",
-            pages,
-            index=pages.index(
-                current_page
-            ),
-            label_visibility="collapsed",
-        )
-
-
-        st.session_state.page = page
-
-
-        st.divider()
-
-
-        # ----------------------------------------------------
-        # REFRESH
-        # ----------------------------------------------------
-
-        if st.button(
-            "Refresh Data",
-            use_container_width=True,
-            key="sidebar_refresh",
-        ):
-
-            st.rerun()
-
-
-        # ----------------------------------------------------
-        # LOGOUT
-        # ----------------------------------------------------
-
-        if st.button(
-            "Logout",
-            use_container_width=True,
-            key="sidebar_logout",
-        ):
-
-            st.session_state.clear()
-
-            st.rerun()
-
-
-        render_html(
-            """
-            <div class="footer-note">
-                FactoryOps
-            </div>
-            """
-        )
-
+    top_navigation(pages)
 
     # ========================================================
     # CONTINUOUS SCROLLING WORKSPACE
@@ -2596,12 +2463,13 @@ def main():
 
     predictions_page()
 
+    risk_page()
+
     maintenance_page()
 
     incidents_page()
 
     help_page()
-
 
     # ========================================================
     # SCROLL SPY
