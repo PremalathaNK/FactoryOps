@@ -1,11 +1,17 @@
 import base64
 import os
 import textwrap
+import urllib.parse
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
 import requests
 import streamlit as st
+
+
+def svg_to_img(svg_str: str, width: int = 20, height: int = 20, extra_style: str = "") -> str:
+    encoded = urllib.parse.quote(svg_str.strip())
+    return f'<img src="data:image/svg+xml,{encoded}" width="{width}" height="{height}" style="display:inline-block;vertical-align:middle;{extra_style}" alt="icon" />'
 
 
 # ============================================================
@@ -41,6 +47,15 @@ def get_login_bg_base64() -> str:
         if os.path.exists(bg_path):
             with open(bg_path, "rb") as f:
                 return base64.b64encode(f.read()).decode("utf-8")
+    return ""
+
+
+@st.cache_data
+def get_banner_img_base64() -> str:
+    path = os.path.join(os.path.dirname(__file__), "assets", "isometric_factory.jpg")
+    if os.path.exists(path):
+        with open(path, "rb") as f:
+            return base64.b64encode(f.read()).decode("utf-8")
     return ""
 
 
@@ -113,107 +128,169 @@ render_html(
         }
 
         .stApp {
-            background:
-                radial-gradient(
-                    circle at 10% 10%,
-                    rgba(59, 130, 246, 0.13),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 90% 85%,
-                    rgba(14, 165, 233, 0.10),
-                    transparent 30%
-                ),
-                linear-gradient(
-                    135deg,
-                    #eef4ff 0%,
-                    #f7f9fc 48%,
-                    #edf5fb 100%
-                );
+            background: #030919 !important;
+            background-color: #030919 !important;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.12), transparent 45%),
+                radial-gradient(circle at 85% 25%, rgba(14, 165, 233, 0.08), transparent 45%),
+                radial-gradient(circle at 50% 80%, rgba(30, 58, 138, 0.1), transparent 50%),
+                linear-gradient(180deg, #020715 0%, #030919 40%, #040d24 100%) !important;
+            color: #f1f5f9 !important;
+            min-height: 100vh !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
         }
 
 
         /* ==================================================
-           REMOVE DEFAULT STREAMLIT SPACING
+           GLOBAL CONTAINER SPACING (Screen Margins & Padding)
            ================================================== */
 
         .block-container {
-            padding-top: 1.5rem !important;
-            padding-bottom: 1rem !important;
+            padding: 2.2rem 3.8rem 4.5rem 3.8rem !important;
+            max-width: 1420px !important;
+            margin: 0 auto !important;
         }
 
         [data-testid="stVerticalBlock"] {
-            gap: 0.55rem;
+            gap: 1rem;
         }
 
 
         /* ==================================================
-           OFFICIAL TOP NAVIGATION
+           OFFICIAL TOP NAVIGATION & HEADER
            ================================================== */
 
         [data-testid="stSidebar"] {
             display: none;
         }
 
-        .factory-topbar {
-            position: sticky;
-            top: 0;
-            z-index: 999;
+        .factory-header-bar {
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1rem;
-            padding: 0.85rem 1.2rem;
-            margin: -1.2rem 0 1.2rem 0;
-            background: rgba(7, 24, 52, 0.94);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(255,255,255,0.10);
-            border-radius: 0 0 16px 16px;
-            box-shadow: 0 10px 30px rgba(7,24,52,0.16);
+            padding: 0.75rem 0 1rem 0;
+            margin-bottom: 0.4rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .factory-topbar-brand {
+        .header-left {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+        }
+
+        .header-brand-title {
             color: #ffffff;
-            font-size: 1.35rem;
+            font-size: 1.5rem;
             font-weight: 850;
             letter-spacing: -0.03em;
+        }
+
+        .header-brand-sub {
+            color: #64748b;
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .header-platform-note {
+            color: #64748b;
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        .header-icon-btn {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .header-icon-btn:hover {
+            background: rgba(37, 99, 235, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .header-badge-dot {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 6px #ef4444;
+        }
+
+        .header-profile-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .header-profile-badge:hover {
+            border-color: #60a5fa;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Nav Pills Container */
+        .factory-nav-container {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .factory-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.5rem 0.95rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            color: #94a3b8 !important;
+            text-decoration: none !important;
+            font-size: 0.88rem;
+            font-weight: 550;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
         }
 
-        .factory-topbar-sub {
-            color: #bfdbfe;
-            font-size: 0.86rem;
-            margin-left: 0.35rem;
-        }
-
-        .factory-nav-note {
-            color: #cbd5e1;
-            font-size: 0.9rem;
-        }
-
-        .factory-nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            flex-wrap: wrap;
-            margin-top: 0.6rem;
-        }
-
-        .factory-nav-links a {
-            color: #dbeafe !important;
-            text-decoration: none !important;
-            font-size: 0.9rem;
-            font-weight: 650;
-            padding: 0.42rem 0.65rem;
-            border-radius: 8px;
-            border: 1px solid transparent;
-            transition: 0.2s ease;
-        }
-
-        .factory-nav-links a:hover {
+        .factory-nav-btn:hover {
+            background: rgba(37, 99, 235, 0.15);
+            border-color: rgba(59, 130, 246, 0.45);
             color: #ffffff !important;
-            background: rgba(255,255,255,0.10);
-            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+        }
+
+        .factory-nav-btn.nav-item-active {
+            background: #2563eb !important;
+            border-color: #3b82f6 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.5) !important;
         }
 
 
@@ -672,18 +749,89 @@ render_html(
 
 
         /* ==================================================
-           SCROLL SECTIONS
+           DASHBOARD HERO BANNER (SECTION 01)
            ================================================== */
+        .dashboard-hero-banner {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(6, 20, 56, 0.95) 0%, rgba(4, 14, 40, 0.95) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.42);
+            border-radius: 20px;
+            padding: 1.8rem 2.4rem;
+            margin-top: 1rem;
+            margin-bottom: 2.2rem;
+            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+        }
 
+        .banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .banner-text-side {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .banner-kicker {
+            color: #38bdf8;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            margin-bottom: 0.35rem;
+        }
+
+        .banner-main-title {
+            color: #ffffff;
+            font-size: clamp(2rem, 2.8vw, 2.6rem);
+            font-weight: 850;
+            letter-spacing: -0.035em;
+            line-height: 1.1;
+            margin-bottom: 0.65rem;
+        }
+
+        .banner-accent-bar {
+            width: 44px;
+            height: 3px;
+            background: #2563eb;
+            border-radius: 2px;
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.8);
+        }
+
+        .banner-graphic-side {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-shrink: 0;
+        }
+
+        .banner-factory-img {
+            width: clamp(200px, 22vw, 300px);
+            height: auto;
+            border-radius: 14px;
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            object-fit: cover;
+        }
+
+        /* Generic Section wrapper for Sections 02-08 */
         .factory-section {
             position: relative;
             width: 100%;
-            padding: 2rem 2rem 2.5rem 2rem;
-            margin: 0 0 1rem 0;
+            padding: 2.2rem 2.4rem 2.6rem 2.4rem;
+            margin: 3.5rem 0 2rem 0;
             border-radius: 22px;
-            border: 1px solid rgba(226,232,240,0.9);
-            background: rgba(255,255,255,0.82);
-            box-shadow: 0 5px 20px rgba(15,23,42,0.07);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            background: rgba(6, 18, 48, 0.85);
+            box-shadow: 0 14px 45px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(14px);
             scroll-margin-top: 25px;
         }
 
@@ -692,198 +840,246 @@ render_html(
             position: absolute;
             top: 0;
             left: 0;
-            width: 5px;
+            width: 4px;
             height: 100%;
-            border-radius: 22px 0 0 22px;
+            border-radius: 20px 0 0 20px;
             background: linear-gradient(180deg, #2563eb, #0ea5e9);
         }
 
         .section-header {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .section-kicker {
-            color: #2563eb;
-            font-size: 0.82rem;
+            color: #38bdf8;
+            font-size: 0.8rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.12em;
-            margin-bottom: 0.35rem;
+            margin-bottom: 0.3rem;
         }
 
         .section-main-title {
-            color: #0f172a;
-            font-size: 2.25rem;
+            color: #ffffff;
+            font-size: 2rem;
             font-weight: 850;
-            letter-spacing: -0.045em;
-            line-height: 1.1;
+            letter-spacing: -0.035em;
+            line-height: 1.15;
         }
-
-        /* DESCRIPTION REMOVED */
-
-
-        /* ==================================================
-           SECTION DIVIDERS
-           ================================================== */
 
         .section-divider {
             height: 1px;
             width: 100%;
-            margin: 0.4rem 0 1.3rem 0;
-            background:
-                linear-gradient(
-                    90deg,
-                    transparent,
-                    #cbd5e1,
-                    transparent
-                );
+            margin: 0.5rem 0 1.5rem 0;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.35), transparent);
         }
-
 
         /* ==================================================
-           METRIC CARDS
+           KPI METRIC CARDS (2 ROWS OF 5 CARDS)
            ================================================== */
-
-        .metric-card {
-            background: rgba(255,255,255,0.94);
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 1rem 1.1rem;
-            min-height: 115px;
-            box-shadow:
-                0 4px 14px rgba(15,23,42,0.05);
+        .kpi-card {
+            background: rgba(6, 17, 43, 0.88);
+            border: 1px solid rgba(59, 130, 246, 0.36);
+            border-radius: 16px;
+            padding: 1.15rem 1.25rem;
+            min-height: 112px;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 1.35rem;
         }
 
-        .metric-label {
-            color: #64748b;
-            font-size: 0.95rem;
-            font-weight: 600;
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(96, 165, 250, 0.65);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(37, 99, 235, 0.3);
+            background: rgba(8, 22, 54, 0.94);
         }
 
-        .metric-value {
-            color: #111827;
-            font-size: 1.9rem;
-            font-weight: 800;
-            margin-top: 0.35rem;
+        .kpi-top-row {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            width: 100%;
+            z-index: 2;
         }
 
-        .metric-note {
+        .kpi-icon-badge {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .kpi-badge-red {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        .kpi-badge-blue {
+            background: rgba(37, 99, 235, 0.15);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            color: #3b82f6;
+        }
+        .kpi-badge-green {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        .kpi-badge-orange {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+        }
+        .kpi-badge-cyan {
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            color: #06b6d4;
+        }
+        .kpi-badge-purple {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #a855f7;
+        }
+        .kpi-badge-amber {
+            background: rgba(234, 179, 8, 0.15);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            color: #eab308;
+        }
+        .kpi-badge-pink {
+            background: rgba(236, 72, 153, 0.15);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            color: #ec4899;
+        }
+
+        .kpi-info {
+            display: flex;
+            flex-direction: column;
+            z-index: 2;
+        }
+
+        .kpi-label {
             color: #94a3b8;
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            white-space: nowrap;
         }
 
-
-        /* ==================================================
-           SECTION TITLES
-           ================================================== */
-
-        .section-title {
-            font-size: 1.5rem;
+        .kpi-value {
+            color: #ffffff;
+            font-size: 1.8rem;
             font-weight: 800;
-            color: #1e293b;
-            margin: 1.3rem 0 0.7rem 0;
+            line-height: 1.1;
+            margin-top: 0.2rem;
+            letter-spacing: -0.02em;
         }
 
+        .kpi-val-red {
+            color: #ef4444 !important;
+            text-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
+        }
+
+        .kpi-sparkline-wrap {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100px;
+            height: 36px;
+            pointer-events: none;
+            opacity: 0.85;
+            z-index: 1;
+        }
+
+        .sparkline-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
 
         /* ==================================================
-           HEALTH OVERVIEW
+           HEALTH OVERVIEW (DONUT & SUMMARY)
            ================================================== */
+        .dashboard-section-heading {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 1.6rem 0 1rem 0;
+            letter-spacing: -0.02em;
+        }
 
         .health-card {
-            background: rgba(255,255,255,0.96);
-            border: 1px solid #e2e8f0;
+            background: rgba(6, 18, 48, 0.85);
+            border: 1px solid rgba(59, 130, 246, 0.38);
             border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow:
-                0 8px 24px rgba(15,23,42,0.06);
+            padding: 1.8rem;
+            margin-top: 0.5rem;
+            margin-bottom: 2.2rem;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(14px);
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .health-chart-title {
-            text-align: center;
-            font-size: 1rem;
+            text-align: left;
+            font-size: 1.15rem;
             font-weight: 800;
-            color: #1e293b;
-            margin-bottom: 0.2rem;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
         }
 
         .health-chart-subtitle {
-            text-align: center;
-            color: #64748b;
-            font-size: 0.78rem;
-            margin-bottom: 1rem;
+            text-align: left;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
         }
 
-        .health-overview-wrapper {
+        .health-donut-layout {
             display: flex;
-            justify-content: center;
             align-items: center;
-            gap: 2.5rem;
+            justify-content: space-between;
+            gap: 1.5rem;
+            width: 100%;
             flex-wrap: wrap;
         }
 
-
-        /* ==================================================
-           DONUT
-           ================================================== */
-
-        .donut-chart {
-            width: 220px;
-            height: 220px;
-            margin: 0 auto;
-            border-radius: 50%;
+        .health-donut-chart {
+            flex: 1 1 200px;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            flex-shrink: 0;
-            box-shadow:
-                0 8px 20px rgba(15,23,42,0.10);
         }
 
-        .donut-center {
-            width: 128px;
-            height: 128px;
-            background: #ffffff;
-            border-radius: 50%;
+        .health-donut-legend {
+            flex: 1 1 200px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow:
-                0 0 0 1px #eef2f7,
-                0 4px 12px rgba(15,23,42,0.06);
-        }
-
-        .donut-number {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #111827;
-            line-height: 1;
-        }
-
-        .donut-text {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-top: 0.35rem;
-            font-weight: 600;
-        }
-
-
-        /* ==================================================
-           HEALTH SUMMARY
-           ================================================== */
-
-        .health-legend {
-            margin-top: 0.5rem;
+            gap: 0.85rem;
         }
 
         .legend-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.85rem 0;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.92rem;
         }
 
         .legend-row:last-child {
@@ -893,84 +1089,297 @@ render_html(
         .legend-left {
             display: flex;
             align-items: center;
-            gap: 0.7rem;
-            font-weight: 600;
-            color: #334155;
+            gap: 0.65rem;
+            color: #cbd5e1;
+            font-weight: 500;
         }
 
         .legend-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            flex-shrink: 0;
+            display: inline-block;
         }
 
+        .legend-dot.green { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .legend-dot.orange { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+        .legend-dot.red { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
         .legend-value {
-            font-weight: 800;
-            color: #111827;
+            color: #ffffff;
+            font-weight: 700;
         }
 
         .legend-percentage {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-left: 0.4rem;
+            color: #94a3b8;
+            font-size: 0.82rem;
+            margin-left: 0.35rem;
+            font-weight: normal;
         }
 
+        /* Health Progress Summary */
+        .health-progress-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 1.2rem;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .progress-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.92rem;
+        }
+
+        .progress-label {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .progress-count {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .progress-pct {
+            color: #94a3b8;
+            font-size: 0.82rem;
+            font-weight: normal;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s ease-in-out;
+        }
+
+        .progress-fill.green {
+            background: linear-gradient(90deg, #059669, #10b981);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .progress-fill.orange {
+            background: linear-gradient(90deg, #d97706, #f59e0b);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        .progress-fill.red {
+            background: linear-gradient(90deg, #b91c1c, #ef4444);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
 
         /* ==================================================
-           FACTORY DATA TABLE
+           TABLES WITH PROPER BORDERS, MARGINS & STYLING
            ================================================== */
+        div[data-testid="stDataFrame"] {
+            border: 1px solid rgba(59, 130, 246, 0.38) !important;
+            border-radius: 16px !important;
+            background: rgba(6, 17, 43, 0.88) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+            overflow: hidden !important;
+            margin: 1.5rem 0 2rem 0 !important;
+        }
 
-        .factory-table-wrapper {
-            width: 100%;
+        .factory-table-card {
+            background: rgba(6, 17, 43, 0.88);
+            border: 1px solid rgba(59, 130, 246, 0.38);
+            border-radius: 14px;
+            padding: 0;
+            overflow: hidden;
+            margin: 0.75rem 0 1.5rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(14px);
+        }
+
+        .factory-table-scroll {
+            max-height: 520px;
+            overflow-y: auto;
             overflow-x: auto;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            background: #ffffff;
-            box-shadow:
-                0 4px 14px rgba(15,23,42,0.04);
-        }
-
-        .factory-table {
             width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
         }
 
-        .factory-table th {
-            text-align: left !important;
-            padding: 12px 16px;
-            background: #f8fafc;
-            color: #334155;
+        .factory-modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-family: inherit;
+            font-size: 0.83rem;
+            color: #e2e8f0;
+        }
+
+        .factory-modern-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .factory-modern-table th {
+            background: linear-gradient(180deg, #091c42 0%, #061433 100%);
+            color: #93c5fd;
+            font-size: 0.75rem;
             font-weight: 700;
-            border-bottom: 1px solid #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 9px 12px;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.45);
+            border-right: 1px solid rgba(59, 130, 246, 0.18);
             white-space: nowrap;
+            text-align: left;
         }
 
-        .factory-table td {
-            text-align: left !important;
-            padding: 11px 16px;
-            color: #111827;
-            border-bottom: 1px solid #f1f5f9;
-            white-space: nowrap;
+        .factory-modern-table th:last-child {
+            border-right: none;
         }
 
-        .factory-table tbody tr:last-child td {
+        .factory-modern-table tbody tr {
+            transition: background 0.15s ease;
+        }
+
+        .factory-modern-table tbody tr:nth-child(odd) {
+            background: rgba(8, 20, 50, 0.72);
+        }
+
+        .factory-modern-table tbody tr:nth-child(even) {
+            background: rgba(5, 14, 38, 0.55);
+        }
+
+        .factory-modern-table tbody tr:hover {
+            background: rgba(37, 99, 235, 0.22) !important;
+        }
+
+        .factory-modern-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.14);
+            border-right: 1px solid rgba(59, 130, 246, 0.1);
+            color: #f1f5f9;
+            vertical-align: middle;
+            font-size: 0.83rem;
+            line-height: 1.35;
+        }
+
+        .factory-modern-table td:last-child {
+            border-right: none;
+        }
+
+        .factory-modern-table tbody tr:last-child td {
             border-bottom: none;
         }
 
-        .factory-table tbody tr:hover {
-            background: #f8fafc;
+        /* Status Badges inside table */
+        .tbl-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.15rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            line-height: 1;
         }
 
+        .tbl-badge.badge-green {
+            background: rgba(16, 185, 129, 0.16);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            color: #34d399;
+        }
+
+        .tbl-badge.badge-amber {
+            background: rgba(245, 158, 11, 0.16);
+            border: 1px solid rgba(245, 158, 11, 0.45);
+            color: #fbbf24;
+        }
+
+        .tbl-badge.badge-red {
+            background: rgba(239, 68, 68, 0.16);
+            border: 1px solid rgba(239, 68, 68, 0.45);
+            color: #f87171;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .badge-dot.green { background: #10b981; box-shadow: 0 0 6px #10b981; }
+        .badge-dot.amber { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+        .badge-dot.red   { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
 
         /* ==================================================
-           GENERAL BUTTONS
+           GENERAL BUTTONS (Refresh, Logout, Actions)
            ================================================== */
 
         .stButton > button {
-            border-radius: 9px;
-            font-weight: 600;
+            background: rgba(10, 25, 60, 0.7) !important;
+            border: 1px solid rgba(59, 130, 246, 0.35) !important;
+            border-radius: 10px !important;
+            color: #e2e8f0 !important;
+            height: 38px !important;
+            min-height: 38px !important;
+            font-size: 0.88rem !important;
+            font-weight: 600 !important;
+            padding: 0 14px !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .stButton > button:hover {
+            background: rgba(29, 78, 216, 0.3) !important;
+            border-color: #3b82f6 !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4) !important;
+            transform: translateY(-1px) !important;
+        }
+
+
+        /* Search inputs & general text inputs in dashboard sections */
+        div[data-testid="stTextInput"] label p {
+            color: #93c5fd !important;
+            font-size: 0.88rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.35rem !important;
+        }
+
+        div[data-testid="stTextInput"] > div {
+            border: 1px solid rgba(59, 130, 246, 0.38) !important;
+            background: rgba(6, 17, 43, 0.85) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        div[data-testid="stTextInput"] > div:hover {
+            border-color: rgba(96, 165, 250, 0.6) !important;
+            box-shadow: 0 0 14px rgba(59, 130, 246, 0.3) !important;
+        }
+
+        div[data-testid="stTextInput"] input {
+            color: #ffffff !important;
+            background-color: transparent !important;
+            background: transparent !important;
+            font-size: 0.92rem !important;
+        }
+
+        div[data-testid="stTextInput"] input::placeholder {
+            color: #64748b !important;
         }
 
 
@@ -1236,21 +1645,93 @@ def metric_card(
     label: str,
     value: Any,
     note: str = "",
+    icon: str = "machines",
+    color: str = "blue",
 ):
+    stroke_colors = {
+        "red": "#ef4444",
+        "blue": "#3b82f6",
+        "green": "#10b981",
+        "orange": "#f59e0b",
+        "cyan": "#06b6d4",
+        "purple": "#a855f7",
+        "amber": "#eab308",
+        "pink": "#ec4899",
+    }
+    bg_tints = {
+        "red": "rgba(239, 68, 68, 0.16)",
+        "blue": "rgba(37, 99, 235, 0.16)",
+        "green": "rgba(16, 185, 129, 0.16)",
+        "orange": "rgba(245, 158, 11, 0.16)",
+        "cyan": "rgba(6, 182, 212, 0.16)",
+        "purple": "rgba(168, 85, 247, 0.16)",
+        "amber": "rgba(234, 179, 8, 0.16)",
+        "pink": "rgba(236, 72, 153, 0.16)",
+    }
+    border_tints = {
+        "red": "rgba(239, 68, 68, 0.35)",
+        "blue": "rgba(37, 99, 235, 0.35)",
+        "green": "rgba(16, 185, 129, 0.35)",
+        "orange": "rgba(245, 158, 11, 0.35)",
+        "cyan": "rgba(6, 182, 212, 0.35)",
+        "purple": "rgba(168, 85, 247, 0.35)",
+        "amber": "rgba(234, 179, 8, 0.35)",
+        "pink": "rgba(236, 72, 153, 0.35)",
+    }
+
+    stroke = stroke_colors.get(color, "#3b82f6")
+    bg_tint = bg_tints.get(color, "rgba(37, 99, 235, 0.16)")
+    border_tint = border_tints.get(color, "rgba(37, 99, 235, 0.35)")
+
+    raw_icons = {
+        "shield": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+        "machines": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+        "healthy": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+        "warning": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+        "critical": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><line x1="2" y1="2" x2="22" y2="22"/></svg>',
+        "health_rate": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+        "availability": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+        "alerts": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+        "maintenance": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+        "risk": f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{stroke}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+    }
+
+    spark_paths = {
+        "shield": "M 0 35 Q 25 32, 50 28 T 85 30 T 115 20 T 140 12",
+        "machines": "M 0 34 Q 25 30, 50 20 T 85 22 T 115 12 T 140 5",
+        "healthy": "M 0 36 Q 30 33, 55 24 T 90 26 T 120 16 T 140 8",
+        "warning": "M 0 35 Q 25 32, 55 22 T 85 24 T 115 14 T 140 6",
+        "critical": "M 0 36 Q 20 33, 45 28 T 75 30 T 110 18 T 140 10",
+        "health_rate": "M 0 35 Q 25 28, 50 18 T 80 22 T 110 12 T 140 6",
+        "availability": "M 0 36 Q 30 32, 60 24 T 90 26 T 120 14 T 140 8",
+        "alerts": "M 0 35 Q 20 32, 45 26 T 75 28 T 105 18 T 140 12",
+        "maintenance": "M 0 36 Q 25 30, 50 20 T 80 24 T 115 12 T 140 6",
+        "risk": "M 0 36 Q 20 33, 45 30 T 80 32 T 115 20 T 140 12",
+    }
+
+    icon_raw = raw_icons.get(icon, raw_icons["machines"])
+    icon_img_html = svg_to_img(icon_raw, 22, 22)
+
+    spark_d = spark_paths.get(icon, "M 0 35 Q 25 30, 50 20 T 85 22 T 115 12 T 140 6")
+    spark_raw = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 45" fill="none"><path d="{spark_d}" stroke="{stroke}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    spark_img_html = svg_to_img(spark_raw, 125, 40, f"position:absolute; right:8px; bottom:6px; pointer-events:none; filter:drop-shadow(0 0 6px {stroke});")
+
+    val_style = f"color: #ef4444; text-shadow: 0 0 16px rgba(239, 68, 68, 0.45);" if color == "red" else "color: #ffffff;"
 
     render_html(
         f"""
-        <div class="metric-card">
-            <div class="metric-label">
-                {label}
+        <div class="kpi-card kpi-{color}">
+            <div class="kpi-top-row">
+                <div class="kpi-icon-badge" style="background:{bg_tint}; border:1px solid {border_tint}; box-shadow: 0 0 12px {bg_tint};">
+                    {icon_img_html}
+                </div>
+                <div class="kpi-info">
+                    <div class="kpi-label">{label}</div>
+                    <div class="kpi-value" style="{val_style}">{value}</div>
+                </div>
             </div>
-
-            <div class="metric-value">
-                {value}
-            </div>
-
-            <div class="metric-note">
-                {note}
+            <div class="kpi-sparkline-wrap">
+                {spark_img_html}
             </div>
         </div>
         """
@@ -1272,6 +1753,32 @@ def normalize_dataframe(
 # ============================================================
 
 
+def format_cell_value(col_name: str, val: Any) -> str:
+    if pd.isna(val) or val is None or str(val).strip() == "" or str(val).strip() == "—":
+        return '<span style="color:#64748b;">—</span>'
+
+    val_str = str(val).strip()
+    lower_val = val_str.lower()
+
+    if lower_val in ["healthy", "normal", "low", "optimal", "passed", "resolved", "completed"]:
+        return f'<span class="tbl-badge badge-green"><span class="badge-dot green"></span>{val_str}</span>'
+    elif lower_val in ["warning", "medium", "moderate", "degraded", "pending", "in_progress"]:
+        return f'<span class="tbl-badge badge-amber"><span class="badge-dot amber"></span>{val_str}</span>'
+    elif lower_val in ["critical", "high", "failed", "danger", "error", "open"]:
+        return f'<span class="tbl-badge badge-red"><span class="badge-dot red"></span>{val_str}</span>'
+
+    if isinstance(val, float):
+        if "score" in col_name.lower() or "prob" in col_name.lower() or "percent" in col_name.lower() or "availability" in col_name.lower():
+            return f'<span style="font-weight:600; color:#93c5fd;">{val:.1f}%</span>'
+        return f'{val:.2f}'
+    elif isinstance(val, int) and not isinstance(val, bool):
+        if "score" in col_name.lower() or "prob" in col_name.lower() or "percent" in col_name.lower():
+            return f'<span style="font-weight:600; color:#93c5fd;">{val}%</span>'
+        return f'{val:,}'
+
+    return val_str
+
+
 def display_table(
     df: pd.DataFrame,
     units: Optional[Dict[str, str]] = None,
@@ -1289,28 +1796,34 @@ def display_table(
                 lambda value: "—" if pd.isna(value) else f"{value} {unit}"
             )
 
-    styled_df = display_df.style
-    numeric_columns = display_df.select_dtypes(include="number").columns
-    text_columns = display_df.select_dtypes(exclude="number").columns
+    headers = list(display_df.columns)
+    th_cells = "".join(f'<th>{h.replace("_", " ").title()}</th>' for h in headers)
 
-    if len(numeric_columns):
-        styled_df = styled_df.set_properties(
-            subset=list(numeric_columns),
-            **{"text-align": "right"},
-        )
+    rows_markup = []
+    for _, row in display_df.iterrows():
+        td_cells = []
+        for col in headers:
+            raw_val = row[col]
+            formatted = format_cell_value(col, raw_val)
+            align = "right" if isinstance(raw_val, (int, float)) and not isinstance(raw_val, bool) else "left"
+            td_cells.append(f'<td style="text-align:{align};">{formatted}</td>')
+        rows_markup.append(f'<tr>{"".join(td_cells)}</tr>')
 
-    if len(text_columns):
-        styled_df = styled_df.set_properties(
-            subset=list(text_columns),
-            **{"text-align": "left"},
-        )
-
-    st.dataframe(
-        styled_df,
-        use_container_width=True,
-        hide_index=True,
-        height=min(520, 90 + 36 * len(display_df)),
-    )
+    table_html = f"""
+    <div class="factory-table-card">
+        <div class="factory-table-scroll">
+            <table class="factory-modern-table">
+                <thead>
+                    <tr>{th_cells}</tr>
+                </thead>
+                <tbody>
+                    {"".join(rows_markup)}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    """
+    render_html(table_html)
 
 
 # ============================================================
@@ -1324,31 +1837,46 @@ def section_start(
     title: str,
     description: str = "",
 ):
-
-    render_html(
-        f"""
-        <section
-            id="{section_id}"
-            class="factory-section"
-        >
-
-            <div class="section-header">
-
-                <div class="section-kicker">
-                    Section {number}
+    if section_id == "factory-dashboard":
+        banner_b64 = get_banner_img_base64()
+        render_html(
+            f"""
+            <section id="{section_id}" style="width:100%;">
+                <div class="dashboard-hero-banner">
+                    <div class="banner-content">
+                        <div class="banner-text-side">
+                            <div class="banner-kicker">SECTION {number}</div>
+                            <div class="banner-main-title">{title}</div>
+                            <div class="banner-accent-bar"></div>
+                        </div>
+                        <div class="banner-graphic-side">
+                            <img src="data:image/jpeg;base64,{banner_b64}" class="banner-factory-img" alt="Smart Factory Platform" />
+                        </div>
+                    </div>
                 </div>
-
-                <div class="section-main-title">
-                    {title}
+            """
+        )
+    else:
+        render_html(
+            f"""
+            <section
+                id="{section_id}"
+                class="factory-section"
+            >
+                <div class="section-header">
+                    <div class="section-kicker">
+                        SECTION {number}
+                    </div>
+                    <div class="section-main-title">
+                        {title}
+                    </div>
+                    <div class="banner-accent-bar" style="margin-top:0.4rem;"></div>
                 </div>
-
-            </div>
-        """
-    )
+            """
+        )
 
 
 def section_end():
-
     render_html(
         """
         </section>
@@ -1357,38 +1885,69 @@ def section_end():
 
 
 def top_navigation(pages: List[str]):
-    links = " ".join(
-        f'<a href="#factory-{page.lower().replace(" ", "-")}">{page}</a>'
-        for page in pages
-    )
+    username = st.session_state.get("username", "Admin")
 
+    bell_svg = svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>', 18, 18)
+    profile_svg = svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>', 18, 18)
+
+    # 1. Official Header Topbar: Brand on Left, Platform & Profile on Right
     render_html(
         f"""
-        <div class="factory-topbar">
-            <div style="width:100%;">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;">
-                    <div>
-                        <span class="factory-topbar-brand">FactoryOps</span>
-                        <span class="factory-topbar-sub">Smart Factory Intelligence</span>
-                    </div>
-                    <div class="factory-nav-note">Predictive Maintenance Platform</div>
+        <header class="factory-header-bar">
+            <div class="header-left">
+                <span class="header-brand-title">FactoryOps</span>
+                <span class="header-brand-sub">Smart Factory Intelligence</span>
+            </div>
+            <div class="header-right">
+                <span class="header-platform-note">Predictive Maintenance Platform</span>
+                <div class="header-icon-btn" title="System Notifications">
+                    {bell_svg}
+                    <span class="header-badge-dot"></span>
                 </div>
-                <div class="factory-nav-links">
-                    {links}
+                <div class="header-profile-badge" title="Logged in as {username}">
+                    {profile_svg}
                 </div>
             </div>
-        </div>
+        </header>
         """
     )
 
-    c1, c2, c3 = st.columns([1, 1, 8])
-    with c1:
-        if st.button("Refresh", use_container_width=True, key="top_refresh"):
-            st.rerun()
-    with c2:
-        if st.button("Logout", use_container_width=True, key="top_logout"):
-            st.session_state.clear()
-            st.rerun()
+    # 2. Navigation Items + Top-Right Aligned Refresh / Logout Row
+    nav_icons = {
+        "Dashboard": svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>', 16, 16),
+        "Machines": svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>', 16, 16),
+        "Sensors": svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6a6 6 0 0 1 6 6"/><path d="M12 10a2 2 0 0 1 2 2"/><circle cx="12" cy="12" r="1"/></svg>', 16, 16),
+        "Predictions": svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>', 16, 16),
+        "Risk Analysis": svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', 16, 16),
+        "Maintenance": svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>', 16, 16),
+        "Incidents": svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>', 16, 16),
+        "Help": svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>', 16, 16),
+    }
+
+    links_html = []
+    for i, page in enumerate(pages):
+        active_cls = "nav-item-active" if i == 0 else ""
+        icon = nav_icons.get(page, "")
+        links_html.append(
+            f'<a href="#factory-{page.lower().replace(" ", "-")}" class="factory-nav-btn {active_cls}">'
+            f'{icon}<span>{page}</span>'
+            f'</a>'
+        )
+    nav_links_joined = "".join(links_html)
+
+    # Place nav items on the left and Refresh / Logout buttons on the top-right in one seamless row!
+    nav_col, action_col = st.columns([7.8, 2.2], gap="medium")
+    with nav_col:
+        render_html(f'<div class="factory-nav-container">{nav_links_joined}</div>')
+    with action_col:
+        c1, c2 = st.columns(2, gap="small")
+        with c1:
+            if st.button("🔄 Refresh", use_container_width=True, key="top_refresh"):
+                st.rerun()
+        with c2:
+            if st.button("🚪 Logout", use_container_width=True, key="top_logout"):
+                st.session_state.clear()
+                st.rerun()
 
 
 # ============================================================
@@ -1545,109 +2104,82 @@ def dashboard_page():
         return
 
     cols = st.columns(5)
-
     with cols[0]:
-
         metric_card(
             "Factory Status",
-            dashboard.get(
-                "factory_status",
-                "—",
-            ),
+            dashboard.get("factory_status", "—"),
+            icon="shield",
+            color="red",
         )
-
     with cols[1]:
-
         metric_card(
             "Total Machines",
-            dashboard.get(
-                "total_machines",
-                0,
-            ),
+            dashboard.get("total_machines", 0),
+            icon="machines",
+            color="blue",
         )
-
     with cols[2]:
-
         metric_card(
             "Healthy",
-            dashboard.get(
-                "healthy_machines",
-                0,
-            ),
+            dashboard.get("healthy_machines", 0),
+            icon="healthy",
+            color="green",
         )
-
     with cols[3]:
-
         metric_card(
             "Warning",
-            dashboard.get(
-                "warning_machines",
-                0,
-            ),
+            dashboard.get("warning_machines", 0),
+            icon="warning",
+            color="orange",
         )
-
     with cols[4]:
-
         metric_card(
             "Critical",
-            dashboard.get(
-                "critical_machines",
-                0,
-            ),
+            dashboard.get("critical_machines", 0),
+            icon="critical",
+            color="red",
         )
 
     cols = st.columns(5)
-
     with cols[0]:
-
         metric_card(
             "Average Health",
             f"{fmt_number(dashboard.get('average_health_score'), 1)}%",
+            icon="health_rate",
+            color="blue",
         )
-
     with cols[1]:
-
         metric_card(
             "Availability",
-            dashboard.get(
-                "machine_availability",
-                "—",
-            ),
+            dashboard.get("machine_availability", "—"),
+            icon="availability",
+            color="cyan",
         )
-
     with cols[2]:
-
         metric_card(
             "Active Alerts",
-            dashboard.get(
-                "active_alerts",
-                0,
-            ),
+            dashboard.get("active_alerts", 0),
+            icon="alerts",
+            color="purple",
         )
-
     with cols[3]:
-
         metric_card(
             "Maintenance Due",
-            dashboard.get(
-                "maintenance_due",
-                0,
-            ),
+            dashboard.get("maintenance_due", 0),
+            icon="maintenance",
+            color="amber",
         )
-
     with cols[4]:
-
         metric_card(
             "High Failure Risk",
-            dashboard.get(
-                "high_failure_risk",
-                0,
-            ),
+            dashboard.get("high_failure_risk", 0),
+            icon="risk",
+            color="pink",
         )
 
     render_html(
         """
-        <div class="section-title">
+        <div class="dashboard-section-heading">
             Health Overview
         </div>
         """
@@ -1691,11 +2223,35 @@ def dashboard_page():
             }
         )
 
-        chart_col, summary_col = st.columns([1.35, 1], gap="large")
+        chart_col, summary_col = st.columns([1.15, 1], gap="medium")
 
         with chart_col:
+            circ = 326.73
+            r_val = 52
+            cx_val = 80
+            cy_val = 80
+
+            len_crit = (critical / total_health) * circ if total_health else 0
+            len_warn = (warning / total_health) * circ if total_health else 0
+            len_hlth = (healthy / total_health) * circ if total_health else 0
+
+            offset_crit = 0.0
+            offset_warn = -len_crit
+            offset_hlth = -(len_crit + len_warn)
+
+            donut_raw = f"""<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+                <circle cx="{cx_val}" cy="{cy_val}" r="{r_val}" fill="none" stroke="#ef4444" stroke-width="26"
+                    stroke-dasharray="{len_crit:.2f} {circ:.2f}" stroke-dashoffset="{offset_crit:.2f}" transform="rotate(-90 {cx_val} {cy_val})" />
+                <circle cx="{cx_val}" cy="{cy_val}" r="{r_val}" fill="none" stroke="#f59e0b" stroke-width="26"
+                    stroke-dasharray="{len_warn:.2f} {circ:.2f}" stroke-dashoffset="{offset_warn:.2f}" transform="rotate(-90 {cx_val} {cy_val})" />
+                <circle cx="{cx_val}" cy="{cy_val}" r="{r_val}" fill="none" stroke="#10b981" stroke-width="26"
+                    stroke-dasharray="{len_hlth:.2f} {circ:.2f}" stroke-dashoffset="{offset_hlth:.2f}" transform="rotate(-90 {cx_val} {cy_val})" />
+                <circle cx="{cx_val}" cy="{cy_val}" r="39" fill="#040e29" />
+            </svg>"""
+            donut_img_html = svg_to_img(donut_raw, 160, 160)
+
             render_html(
-                """
+                f"""
                 <div class="health-card">
                     <div class="health-chart-title">
                         Machine Health Overview
@@ -1703,37 +2259,43 @@ def dashboard_page():
                     <div class="health-chart-subtitle">
                         Distribution of current machine health status
                     </div>
+                    <div class="health-donut-layout" style="display:flex; align-items:center; justify-content:space-around; gap:1.5rem; padding-top:0.8rem;">
+                        <div class="health-donut-chart">
+                            {donut_img_html}
+                        </div>
+                        <div class="health-donut-legend">
+                            <div class="legend-row">
+                                <div class="legend-left">
+                                    <span class="legend-dot green"></span>
+                                    Healthy
+                                </div>
+                                <div class="legend-value">
+                                    {healthy} <span class="legend-percentage">({healthy_percent:.1f}%)</span>
+                                </div>
+                            </div>
+                            <div class="legend-row">
+                                <div class="legend-left">
+                                    <span class="legend-dot orange"></span>
+                                    Warning
+                                </div>
+                                <div class="legend-value">
+                                    {warning} <span class="legend-percentage">({warning_percent:.1f}%)</span>
+                                </div>
+                            </div>
+                            <div class="legend-row">
+                                <div class="legend-left">
+                                    <span class="legend-dot red"></span>
+                                    Critical
+                                </div>
+                                <div class="legend-value">
+                                    {critical} <span class="legend-percentage">({critical_percent:.1f}%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 """
             )
-
-            chart = {
-                "mark": {"type": "arc", "innerRadius": 58},
-                "encoding": {
-                    "theta": {"field": "Machines", "type": "quantitative"},
-                    "color": {
-                        "field": "Status",
-                        "type": "nominal",
-                        "scale": {
-                            "domain": ["Healthy", "Warning", "Critical"],
-                            "range": ["#16a34a", "#f59e0b", "#dc2626"],
-                        },
-                        "legend": {"title": None, "orient": "bottom"},
-                    },
-                    "tooltip": [
-                        {"field": "Status", "type": "nominal"},
-                        {"field": "Machines", "type": "quantitative"},
-                    ],
-                },
-                "width": "container",
-                "height": 300,
-            }
-
-            st.vega_lite_chart(
-                health_data,
-                chart,
-                use_container_width=True,
-            )
-            render_html("</div>")
 
         with summary_col:
             render_html(
@@ -1742,35 +2304,47 @@ def dashboard_page():
                     <div class="health-chart-title">
                         Health Summary
                     </div>
-                    <div class="health-legend">
-                        <div class="legend-row">
-                            <div class="legend-left">
-                                <div class="legend-dot" style="background:#16a34a;"></div>
-                                Healthy
+                    <div class="health-progress-summary">
+                        <div class="progress-item">
+                            <div class="progress-info">
+                                <div class="progress-label">
+                                    <span class="legend-dot green"></span>
+                                    Healthy
+                                </div>
+                                <div class="progress-count">
+                                    {healthy} <span class="progress-pct">({healthy_percent:.1f}%)</span>
+                                </div>
                             </div>
-                            <div class="legend-value">
-                                {healthy}
-                                <span class="legend-percentage">({healthy_percent:.1f}%)</span>
-                            </div>
-                        </div>
-                        <div class="legend-row">
-                            <div class="legend-left">
-                                <div class="legend-dot" style="background:#f59e0b;"></div>
-                                Warning
-                            </div>
-                            <div class="legend-value">
-                                {warning}
-                                <span class="legend-percentage">({warning_percent:.1f}%)</span>
+                            <div class="progress-track">
+                                <div class="progress-fill green" style="width: {max(2.0, healthy_percent):.1f}%;"></div>
                             </div>
                         </div>
-                        <div class="legend-row">
-                            <div class="legend-left">
-                                <div class="legend-dot" style="background:#dc2626;"></div>
-                                Critical
+                        <div class="progress-item">
+                            <div class="progress-info">
+                                <div class="progress-label">
+                                    <span class="legend-dot orange"></span>
+                                    Warning
+                                </div>
+                                <div class="progress-count">
+                                    {warning} <span class="progress-pct">({warning_percent:.1f}%)</span>
+                                </div>
                             </div>
-                            <div class="legend-value">
-                                {critical}
-                                <span class="legend-percentage">({critical_percent:.1f}%)</span>
+                            <div class="progress-track">
+                                <div class="progress-fill orange" style="width: {max(2.0, warning_percent):.1f}%;"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-info">
+                                <div class="progress-label">
+                                    <span class="legend-dot red"></span>
+                                    Critical
+                                </div>
+                                <div class="progress-count">
+                                    {critical} <span class="progress-pct">({critical_percent:.1f}%)</span>
+                                </div>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill red" style="width: {max(2.0, critical_percent):.1f}%;"></div>
                             </div>
                         </div>
                     </div>
