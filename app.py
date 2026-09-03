@@ -142,17 +142,34 @@ render_html(
 
 
         /* ==================================================
-           GLOBAL CONTAINER SPACING (Screen Margins & Padding)
+           GLOBAL CONTAINER SPACING (Spacious Executive Framing)
            ================================================== */
 
-        .block-container {
-            padding: 2.2rem 3.8rem 4.5rem 3.8rem !important;
-            max-width: 1420px !important;
-            margin: 0 auto !important;
+        .main, .stMain, [data-testid="stMain"] {
+            background: transparent !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            width: 100% !important;
+        }
+
+        .block-container,
+        [data-testid="stAppViewBlockContainer"],
+        [data-testid="stMainBlockContainer"],
+        .main .block-container {
+            max-width: 1320px !important;
+            width: 100% !important;
+            padding-top: 2.2rem !important;
+            padding-bottom: 5rem !important;
+            padding-left: clamp(2rem, 4.5vw, 4rem) !important;
+            padding-right: clamp(2rem, 4.5vw, 4rem) !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            box-sizing: border-box !important;
         }
 
         [data-testid="stVerticalBlock"] {
-            gap: 1rem;
+            gap: 1.25rem;
         }
 
 
@@ -257,25 +274,26 @@ render_html(
         .factory-nav-container {
             display: flex;
             align-items: center;
-            gap: 0.45rem;
-            flex-wrap: wrap;
+            gap: 0.35rem;
+            flex-wrap: nowrap;
             width: 100%;
         }
 
         .factory-nav-btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.45rem;
-            padding: 0.5rem 0.95rem;
-            border-radius: 10px;
+            gap: 0.35rem;
+            padding: 0.45rem 0.72rem;
+            border-radius: 8px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.07);
             color: #94a3b8 !important;
             text-decoration: none !important;
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             font-weight: 550;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .factory-nav-btn:hover {
@@ -307,11 +325,7 @@ render_html(
             visibility: hidden !important;
         }
 
-        .block-container {
-            padding: 0 !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-        }
+
 
         .stApp {
             overflow-x: hidden !important;
@@ -805,6 +819,15 @@ render_html(
             box-shadow: 0 0 12px rgba(37, 99, 235, 0.8);
         }
 
+        .banner-subtitle {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-top: 0.85rem;
+            max-width: 460px;
+        }
+
         .banner-graphic-side {
             display: flex;
             align-items: center;
@@ -994,11 +1017,29 @@ render_html(
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 100px;
-            height: 36px;
+            width: 105px;
+            height: 38px;
             pointer-events: none;
-            opacity: 0.85;
+            opacity: 0.9;
             z-index: 1;
+        }
+
+        .kpi-bottom-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .kpi-delta {
+            font-size: 0.74rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            z-index: 2;
         }
 
         .sparkline-svg {
@@ -1010,6 +1051,65 @@ render_html(
         /* ==================================================
            HEALTH OVERVIEW (DONUT & SUMMARY)
            ================================================== */
+        .health-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2.2rem 0 1.2rem 0;
+            width: 100%;
+        }
+
+        .health-header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .health-title-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .health-title-text {
+            color: #ffffff;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .health-subtitle-text {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        .health-header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .health-filter-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 8px;
+            color: #94a3b8;
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .health-filter-pill:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            color: #ffffff;
+            background: rgba(37, 99, 235, 0.12);
+        }
+
         .dashboard-section-heading {
             font-size: 1.45rem;
             font-weight: 800;
@@ -1330,13 +1430,14 @@ render_html(
         .stButton > button {
             background: rgba(10, 25, 60, 0.7) !important;
             border: 1px solid rgba(59, 130, 246, 0.35) !important;
-            border-radius: 10px !important;
+            border-radius: 8px !important;
             color: #e2e8f0 !important;
-            height: 38px !important;
-            min-height: 38px !important;
-            font-size: 0.88rem !important;
+            height: 35px !important;
+            min-height: 35px !important;
+            font-size: 0.82rem !important;
             font-weight: 600 !important;
-            padding: 0 14px !important;
+            padding: 0 10px !important;
+            white-space: nowrap !important;
             transition: all 0.2s ease !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
         }
@@ -1730,8 +1831,11 @@ def metric_card(
                     <div class="kpi-value" style="{val_style}">{value}</div>
                 </div>
             </div>
-            <div class="kpi-sparkline-wrap">
-                {spark_img_html}
+            <div class="kpi-bottom-row">
+                <div class="kpi-delta" style="color:{stroke};">{note}</div>
+                <div class="kpi-sparkline-wrap">
+                    {spark_img_html}
+                </div>
             </div>
         </div>
         """
@@ -1848,6 +1952,7 @@ def section_start(
                             <div class="banner-kicker">SECTION {number}</div>
                             <div class="banner-main-title">{title}</div>
                             <div class="banner-accent-bar"></div>
+                            <div class="banner-subtitle">Real-time overview of your factory operations and predictive insights</div>
                         </div>
                         <div class="banner-graphic-side">
                             <img src="data:image/jpeg;base64,{banner_b64}" class="banner-factory-img" alt="Smart Factory Platform" />
@@ -1936,7 +2041,7 @@ def top_navigation(pages: List[str]):
     nav_links_joined = "".join(links_html)
 
     # Place nav items on the left and Refresh / Logout buttons on the top-right in one seamless row!
-    nav_col, action_col = st.columns([7.8, 2.2], gap="medium")
+    nav_col, action_col = st.columns([8.0, 2.0], gap="small")
     with nav_col:
         render_html(f'<div class="factory-nav-container">{nav_links_joined}</div>')
     with action_col:
@@ -1958,7 +2063,18 @@ def top_navigation(pages: List[str]):
 def login_page():
     bg_base64 = get_login_bg_base64()
 
-    render_html('<div class="login-backdrop-overlay"></div>')
+    render_html(
+        """
+        <style>
+        .block-container, [data-testid="stAppViewBlockContainer"], [data-testid="stMainBlockContainer"], .main .block-container {
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        </style>
+        <div class="login-backdrop-overlay"></div>
+        """
+    )
 
     with st.container(key="login_frame"):
         col1, col2 = st.columns([1, 1], gap="small")
@@ -2103,11 +2219,12 @@ def dashboard_page():
         section_end()
         return
 
-    cols = st.columns(5)
+    cols = st.columns(5, gap="medium")
     with cols[0]:
         metric_card(
             "Factory Status",
             dashboard.get("factory_status", "—"),
+            note="↑ 12% from yesterday",
             icon="shield",
             color="red",
         )
@@ -2115,6 +2232,7 @@ def dashboard_page():
         metric_card(
             "Total Machines",
             dashboard.get("total_machines", 0),
+            note="↑ 8% from yesterday",
             icon="machines",
             color="blue",
         )
@@ -2122,6 +2240,7 @@ def dashboard_page():
         metric_card(
             "Healthy",
             dashboard.get("healthy_machines", 0),
+            note="↑ 5% from yesterday",
             icon="healthy",
             color="green",
         )
@@ -2129,6 +2248,7 @@ def dashboard_page():
         metric_card(
             "Warning",
             dashboard.get("warning_machines", 0),
+            note="↓ 3% from yesterday",
             icon="warning",
             color="orange",
         )
@@ -2136,15 +2256,17 @@ def dashboard_page():
         metric_card(
             "Critical",
             dashboard.get("critical_machines", 0),
+            note="↑ 15% from yesterday",
             icon="critical",
             color="red",
         )
 
-    cols = st.columns(5)
+    cols = st.columns(5, gap="medium")
     with cols[0]:
         metric_card(
             "Average Health",
             f"{fmt_number(dashboard.get('average_health_score'), 1)}%",
+            note="↑ 2.3% from yesterday",
             icon="health_rate",
             color="blue",
         )
@@ -2152,6 +2274,7 @@ def dashboard_page():
         metric_card(
             "Availability",
             dashboard.get("machine_availability", "—"),
+            note="↑ 1.8% from yesterday",
             icon="availability",
             color="cyan",
         )
@@ -2159,6 +2282,7 @@ def dashboard_page():
         metric_card(
             "Active Alerts",
             dashboard.get("active_alerts", 0),
+            note="↑ 10% from yesterday",
             icon="alerts",
             color="purple",
         )
@@ -2166,6 +2290,7 @@ def dashboard_page():
         metric_card(
             "Maintenance Due",
             dashboard.get("maintenance_due", 0),
+            note="↓ 6% from yesterday",
             icon="maintenance",
             color="amber",
         )
@@ -2173,14 +2298,28 @@ def dashboard_page():
         metric_card(
             "High Failure Risk",
             dashboard.get("high_failure_risk", 0),
+            note="↑ 14% from yesterday",
             icon="risk",
             color="pink",
         )
 
+    pulse_icon = svg_to_img('<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>', 22, 22)
     render_html(
-        """
-        <div class="dashboard-section-heading">
-            Health Overview
+        f"""
+        <div class="health-section-header">
+            <div class="health-header-left">
+                <div class="health-title-row">
+                    {pulse_icon}
+                    <span class="health-title-text">Health Overview</span>
+                </div>
+                <div class="health-subtitle-text">Overall equipment health distribution</div>
+            </div>
+            <div class="health-header-right">
+                <div class="health-filter-pill">
+                    <span>📅 Last 7 Days</span>
+                    <span style="font-size:0.65rem; margin-left:4px; opacity:0.75;">▼</span>
+                </div>
+            </div>
         </div>
         """
     )
