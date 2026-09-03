@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 import requests
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 def svg_to_img(svg_str: str, width: int = 20, height: int = 20, extra_style: str = "") -> str:
@@ -309,6 +310,20 @@ render_html(
             border-color: #3b82f6 !important;
             color: #ffffff !important;
             box-shadow: 0 4px 18px rgba(37, 99, 235, 0.5) !important;
+        }
+
+        [class*="st-key-sticky_navigation"] {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 0.45rem clamp(1rem, 2.2vw, 2rem) 0.55rem;
+            box-sizing: border-box;
+            background: rgba(3, 9, 25, 0.96);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
         }
 
 
@@ -1008,6 +1023,17 @@ render_html(
             letter-spacing: -0.02em;
         }
 
+        .metric-unit {
+            display: inline-block;
+            margin-left: 0.3rem;
+            font-size: 0.58em;
+            font-weight: 600;
+            line-height: 1.15;
+            letter-spacing: 0;
+            vertical-align: baseline;
+            color: #cbd5e1;
+        }
+
         .kpi-val-red {
             color: #ef4444 !important;
             text-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
@@ -1450,6 +1476,31 @@ render_html(
             transform: translateY(-1px) !important;
         }
 
+        .quick-action-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 44px;
+            box-sizing: border-box;
+            background: rgba(10, 25, 60, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .quick-action-link:hover {
+            background: rgba(29, 78, 216, 0.3);
+            border-color: #3b82f6;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+            transform: translateY(-1px);
+        }
+
 
         /* Search inputs & general text inputs in dashboard sections */
         div[data-testid="stTextInput"] label p {
@@ -1481,6 +1532,11 @@ render_html(
 
         div[data-testid="stTextInput"] input::placeholder {
             color: #64748b !important;
+        }
+
+        [class*="st-key-login_form_side"] div[data-testid="stTextInput"] input {
+            color: #111827 !important;
+            -webkit-text-fill-color: #111827 !important;
         }
 
 
@@ -1575,7 +1631,43 @@ render_html(
 
 
 def inject_scroll_spy():
-    return
+    components.html(
+        """
+        <script>
+        (() => {
+            const appDocument = window.parent.document;
+            const links = Array.from(appDocument.querySelectorAll(".factory-nav-btn"));
+            const sections = links
+                .map((link) => appDocument.querySelector(link.getAttribute("href")))
+                .filter(Boolean);
+            const scrollContainer = appDocument.querySelector('section[data-testid="stMain"]');
+
+            if (!links.length || !sections.length || !scrollContainer) return;
+
+            const updateActivePage = () => {
+                const containerTop = scrollContainer.getBoundingClientRect().top;
+                const marker = scrollContainer.scrollTop + 180;
+                let activeSection = sections[0];
+
+                sections.forEach((section) => {
+                    const sectionTop = section.getBoundingClientRect().top - containerTop + scrollContainer.scrollTop;
+                    if (sectionTop <= marker) activeSection = section;
+                });
+
+                links.forEach((link) => {
+                    const isActive = link.getAttribute("href") === `#${activeSection.id}`;
+                    link.classList.toggle("nav-item-active", isActive);
+                });
+            };
+
+            scrollContainer.addEventListener("scroll", updateActivePage, { passive: true });
+            updateActivePage();
+        })();
+        </script>
+        """,
+        height=1,
+        width=1,
+    )
 
 
 # ============================================================
@@ -1748,6 +1840,8 @@ def metric_card(
     note: str = "",
     icon: str = "machines",
     color: str = "blue",
+    unit: str = "",
+    show_sparkline: bool = True,
 ):
     stroke_colors = {
         "red": "#ef4444",
@@ -1816,8 +1910,10 @@ def metric_card(
     spark_d = spark_paths.get(icon, "M 0 35 Q 25 30, 50 20 T 85 22 T 115 12 T 140 6")
     spark_raw = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 45" fill="none"><path d="{spark_d}" stroke="{stroke}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     spark_img_html = svg_to_img(spark_raw, 125, 40, f"position:absolute; right:8px; bottom:6px; pointer-events:none; filter:drop-shadow(0 0 6px {stroke});")
+    sparkline_html = f'<div class="kpi-sparkline-wrap">{spark_img_html}</div>' if show_sparkline else ""
 
     val_style = f"color: #ef4444; text-shadow: 0 0 16px rgba(239, 68, 68, 0.45);" if color == "red" else "color: #ffffff;"
+    unit_html = f'<span class="metric-unit">{unit}</span>' if unit else ""
 
     render_html(
         f"""
@@ -1828,14 +1924,12 @@ def metric_card(
                 </div>
                 <div class="kpi-info">
                     <div class="kpi-label">{label}</div>
-                    <div class="kpi-value" style="{val_style}">{value}</div>
+                    <div class="kpi-value" style="{val_style}">{value}{unit_html}</div>
                 </div>
             </div>
             <div class="kpi-bottom-row">
                 <div class="kpi-delta" style="color:{stroke};">{note}</div>
-                <div class="kpi-sparkline-wrap">
-                    {spark_img_html}
-                </div>
+                {sparkline_html}
             </div>
         </div>
         """
@@ -1909,8 +2003,7 @@ def display_table(
         for col in headers:
             raw_val = row[col]
             formatted = format_cell_value(col, raw_val)
-            align = "right" if isinstance(raw_val, (int, float)) and not isinstance(raw_val, bool) else "left"
-            td_cells.append(f'<td style="text-align:{align};">{formatted}</td>')
+            td_cells.append(f'<td style="text-align:right;">{formatted}</td>')
         rows_markup.append(f'<tr>{"".join(td_cells)}</tr>')
 
     table_html = f"""
@@ -2041,18 +2134,23 @@ def top_navigation(pages: List[str]):
     nav_links_joined = "".join(links_html)
 
     # Place nav items on the left and Refresh / Logout buttons on the top-right in one seamless row!
-    nav_col, action_col = st.columns([8.0, 2.0], gap="small")
-    with nav_col:
-        render_html(f'<div class="factory-nav-container">{nav_links_joined}</div>')
-    with action_col:
-        c1, c2 = st.columns(2, gap="small")
-        with c1:
-            if st.button("🔄 Refresh", use_container_width=True, key="top_refresh"):
-                st.rerun()
-        with c2:
-            if st.button("🚪 Logout", use_container_width=True, key="top_logout"):
-                st.session_state.clear()
-                st.rerun()
+    with st.container(key="sticky_navigation"):
+        nav_col, action_col = st.columns([8.0, 2.0], gap="small")
+        with nav_col:
+            render_html(f'<div class="factory-nav-container">{nav_links_joined}</div>')
+        with action_col:
+            c1, c2 = st.columns(2, gap="small")
+            with c1:
+                st.button(
+                    "🔄 Refresh",
+                    use_container_width=True,
+                    key="top_refresh",
+                    on_click=st.rerun,
+                )
+            with c2:
+                if st.button("🚪 Logout", use_container_width=True, key="top_logout"):
+                    st.session_state.clear()
+                    st.rerun()
 
 
 # ============================================================
@@ -2083,11 +2181,6 @@ def login_page():
             render_html(
                 f"""
                 <div class="login-hero-container" style="background-image: url('data:image/png;base64,{bg_base64}');">
-                    <div class="login-hero-content-box">
-                        <div class="hero-title-brand">FactoryOps</div>
-                        <div class="hero-tagline-text">Smart Operations. Stronger Tomorrow.</div>
-                        <div class="hero-divider-bar"></div>
-                    </div>
                 </div>
                 """
             )
@@ -2314,12 +2407,6 @@ def dashboard_page():
                 </div>
                 <div class="health-subtitle-text">Overall equipment health distribution</div>
             </div>
-            <div class="health-header-right">
-                <div class="health-filter-pill">
-                    <span>📅 Last 7 Days</span>
-                    <span style="font-size:0.65rem; margin-left:4px; opacity:0.75;">▼</span>
-                </div>
-            </div>
         </div>
         """
     )
@@ -2504,37 +2591,19 @@ def dashboard_page():
     c1, c2, c3 = st.columns(3)
 
     with c1:
-
-        if st.button(
-            "View Machines",
-            use_container_width=True,
-            key="quick_machines",
-        ):
-
-            st.session_state.page = "Machines"
-            st.rerun()
+        render_html(
+            '<a class="quick-action-link" href="#factory-machines">View Machines</a>'
+        )
 
     with c2:
-
-        if st.button(
-            "View Predictions",
-            use_container_width=True,
-            key="quick_predictions",
-        ):
-
-            st.session_state.page = "Predictions"
-            st.rerun()
+        render_html(
+            '<a class="quick-action-link" href="#factory-predictions">View Predictions</a>'
+        )
 
     with c3:
-
-        if st.button(
-            "View Incidents",
-            use_container_width=True,
-            key="quick_incidents",
-        ):
-
-            st.session_state.page = "Incidents"
-            st.rerun()
+        render_html(
+            '<a class="quick-action-link" href="#factory-incidents">View Incidents</a>'
+        )
 
     section_end()
 
@@ -2719,7 +2788,9 @@ def sensors_page():
                         "_",
                         " ",
                     ).title(),
-                    f"{value} {unit}",
+                    value,
+                    unit=unit,
+                    show_sparkline=False,
                 )
 
     render_html(
