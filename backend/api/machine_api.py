@@ -11,6 +11,7 @@ from backend.crud.machine_crud import (
     get_machine_by_code,
     create_machine
 )
+from backend.crud.prediction_crud import calculate_prediction
 
 from backend.schemas.machine_schema import (
     MachineCreate,
@@ -24,6 +25,28 @@ router = APIRouter(
 )
 
 
+def apply_current_health_status(db: Session, machine):
+
+    prediction = calculate_prediction(
+        db,
+        machine.id
+    )
+
+    if prediction is None:
+        machine.health_status = "Unknown"
+    else:
+        machine.health_status = {
+            "Low": "Healthy",
+            "Medium": "Warning",
+            "High": "Critical",
+        }.get(
+            prediction["risk_level"],
+            "Unknown"
+        )
+
+    return machine
+
+
 @router.get(
     "/",
     response_model=List[MachineResponse]
@@ -34,7 +57,10 @@ def get_machines(
 
     machines = get_all_machines(db)
 
-    return machines
+    return [
+        apply_current_health_status(db, machine)
+        for machine in machines
+    ]
 
 
 @router.get(
@@ -57,7 +83,7 @@ def get_machine(
             detail="Machine not found"
         )
 
-    return machine
+    return apply_current_health_status(db, machine)
 
 
 @router.get(
